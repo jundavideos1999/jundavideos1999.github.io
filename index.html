@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DA放異采</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="https://velvety-kataifi-599443.netlify.app">
+                <img src="images/logo/logo.png"  alt="DA放異采 Logo" class="nav-logo-img">
+                </a>
+                <h2>DA放異采</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">首頁</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#portfolio" class="nav-link">作品集</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">關於我</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#blog" class="nav-link">部落格</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">聯絡我</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首頁區塊 -->
+    <section id="home" class="hero">
+        <!-- 影片背景 -->
+        <div class="hero-video-background">
+            <video autoplay muted loop playsinline>
+                <source src="videos/hero-video.mp4" type="video/mp4">
+                <!-- <source src="videos/hero-video.webm" type="video/webm"> -->
+                <!-- 如果影片無法播放，顯示後備圖片 -->
+                <img src="images/hero/hero-fallback.jpg" alt="攝影背景">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">留下的不只是影像<br>而是記憶</h1>
+            <p class="hero-subtitle">訪談影片｜ 活動紀錄｜商業形象｜線上課程｜短影音｜</p>
+            <div class="hero-buttons">
+                <a href="#portfolio" class="btn btn-primary">查看作品</a>
+                <a href="#contact" class="btn btn-secondary">聯絡我</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品集區塊 -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <h2 class="section-title">作品集</h2>
+            <div class="portfolio-filters">
+                <button class="filter-btn active" data-filter="all">推薦</button>
+                <button class="filter-btn" data-filter="interview">訪談影片</button>
+                <button class="filter-btn" data-filter="event">活動紀錄</button>
+                <button class="filter-btn" data-filter="brand">商業形象</button>
+                <button class="filter-btn" data-filter="course">線上課程</button>
+                <button class="filter-btn" data-filter="short">短影音</button>
+            </div>
+            <div class="portfolio-grid">
+                <div class="portfolio-item" data-category="interview" data-video-url="https://www.youtube.com/watch?v=6xliQArh3ZE">
+                    <div class="portfolio-image">
+                        <img src="images/Portfolio/portrait/portrait-1.jpg" alt="人像作品 1" loading="lazy">
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>訪談影片</h3>
+                        <p>採訪/人物專訪</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=SIuDZzOpto4">
+                    <div class="portfolio-image">
+                        <img src="images/Portfolio/landscape/landscape - 1.jpg" alt="風景作品 1" loading="lazy">
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>現場活動精彩剪影</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=nz-SkaDuHrM">
+                    <div class="portfolio-image">
+                        <img src="images/Portfolio/commercial/commercial - 1.jpg" alt="商業作品 1" loading="lazy">
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>品牌/企業形象影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=O8tijVzUBh4">
+                    <div class="portfolio-image">
+                        <img src="images/Portfolio/landscape/landscape - 2.jpg" alt="風景作品 2" loading="lazy">
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>城市/展演/路跑</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=2sLUsDJDeqI">
+                    <div class="portfolio-image">
+                        <img src="images/Portfolio/commercial/commercial - 2.jpg" alt="商業作品 2" loading="lazy">
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>企業形象/廣告</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="course" data-video-url="https://www.youtube.com/watch?v=lwSDWgx2KNc">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-chalkboard-teacher"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>線上課程</h3>
+                        <p>教學課程/示範影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="short" data-video-url="https://www.youtube.com/watch?v=1KM_mO236NA">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-video"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>短影音</h3>
+                        <p>Reels/Shorts/TikTok</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <!-- 追加：活動紀錄其餘影片 -->
+                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=ktVPlFQ2qkc">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>現場活動精彩剪影</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=4LwhGL3MNfU">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>現場活動精彩剪影</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=TwQiP0fm8-8">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>現場活動精彩剪影</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=04Z2DeHjrFw">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>現場活動精彩剪影</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=23z2tkyX9lU">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>現場活動精彩剪影</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+
+                <!-- 追加：商業形象其餘影片 -->
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=V4nTyhuNc6c">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-briefcase"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>品牌/企業形象影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=CWrAS4uqjvE">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-briefcase"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>品牌/企業形象影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=0MdisXOZ8v4">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-briefcase"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>品牌/企業形象影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=20z7V10HsoE">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-briefcase"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>品牌/企業形象影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=459p_bn4U3k">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-briefcase"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>品牌/企業形象影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=DtD8iSOLbls">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-briefcase"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>品牌/企業形象影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="brand" data-video-url="https://www.youtube.com/watch?v=1k9pxlpgxjk">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-briefcase"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>商業形象</h3>
+                        <p>品牌/企業形象影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+
+                <!-- 追加：線上課程其餘影片 -->
+                <div class="portfolio-item" data-category="course" data-video-url="https://www.youtube.com/watch?v=jUmLAfEEnd8">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-chalkboard-teacher"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>線上課程</h3>
+                        <p>教學課程/示範影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="course" data-video-url="https://www.youtube.com/watch?v=zQTlWs3xQG4">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-chalkboard-teacher"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>線上課程</h3>
+                        <p>教學課程/示範影片</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+
+                <!-- 追加：短影音其餘影片 -->
+                <div class="portfolio-item" data-category="short" data-video-url="https://www.youtube.com/watch?v=mZ0Bxc6wtkE">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-video"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>短影音</h3>
+                        <p>Reels/Shorts/TikTok</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="short" data-video-url="https://www.youtube.com/watch?v=mr63lVGcPlw">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-video"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>短影音</h3>
+                        <p>Reels/Shorts/TikTok</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="short" data-video-url="https://www.youtube.com/watch?v=qfcv0CGgVt0">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-video"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>短影音</h3>
+                        <p>Reels/Shorts/TikTok</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                <div class="portfolio-item" data-category="short" data-video-url="https://www.youtube.com/shorts/dIIXsOgEvpk?feature=share">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-video"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>短影音</h3>
+                        <p>Reels/Shorts/TikTok</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 影音燈箱 -->
+    <div id="video-lightbox" class="video-lightbox" aria-hidden="true" role="dialog">
+        <button class="video-close" aria-label="關閉影片">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="video-wrapper" id="video-wrapper"></div>
+    </div>
+
+    <!-- 關於我區塊 -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="section-title">關於我</h2>
+                    <p>我是一名專業攝影師，擁有超過5年的攝影經驗。專精於人像、風景與商業攝影，致力於捕捉每個珍貴的瞬間。</p>
+                    <p>我相信攝影不僅是技術，更是一種藝術表達。每一張照片都承載著故事，每一個角度都訴說著情感。</p>
+                    <div class="skills">
+                        <h3>專業技能</h3>
+                        <div class="skill-item">
+                            <span>人像攝影</span>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span>風景攝影</span>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span>商業攝影</span>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="images/about/profile.jpg" alt="Ben profile" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 部落格區塊 -->
+    <section id="blog" class="blog">
+        <div class="container">
+            <h2 class="section-title">部落格</h2>
+            <div class="blog-grid">
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="blog-content">
+                        <h3>攝影技巧分享：如何拍出完美的人像</h3>
+                        <p class="blog-date">2024年1月15日</p>
+                        <p>分享我在人像攝影中的心得和技巧，從光線運用到底片選擇...</p>
+                        <a href="#" class="read-more">閱讀更多</a>
+                    </div>
+                </article>
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                    </div>
+                    <div class="blog-content">
+                        <h3>風景攝影的黃金時刻</h3>
+                        <p class="blog-date">2024年1月10日</p>
+                        <p>探討風景攝影中最重要的時間因素，以及如何把握最佳拍攝時機...</p>
+                        <a href="#" class="read-more">閱讀更多</a>
+                    </div>
+                </article>
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                    </div>
+                    <div class="blog-content">
+                        <h3>商業攝影的創意發想</h3>
+                        <p class="blog-date">2024年1月5日</p>
+                        <p>如何在商業攝影中融入創意元素，讓產品更具吸引力...</p>
+                        <a href="#" class="read-more">閱讀更多</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 聯絡區塊 -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">聯絡我</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>聯絡資訊</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>電子郵件</h4>
+                            <p><a href="mailto:benXXXXXXX@gmail.com" class="contact-link">jundavideos1999@gmail.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>電話</h4>
+                            <p><a href="tel:0912345678" class="contact-link">0970186357</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>工作室地址</h4>
+                            <p>目前還在規劃中!</p>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/ben880105?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="https://youtube.com/playlist?list=PLgmuH1hElc4mEd-hsahZ-EmPVDFvkMx-7&si=zHzRBked8hpSE2VX " class="social-link"><i class="fab fa-youtube"></i></a>
+
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>發送訊息</h3>
+                    <form id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                        <!-- Netlify 必要的隱藏欄位 -->
+                        <input type="hidden" name="form-name" value="contact">
+                        <p hidden>
+                            <label>不要填這個：<input name="bot-field"></label>
+                        </p>
+                    
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="您的姓名" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="您的電子郵件" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="subject" placeholder="主旨">
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" placeholder="您的訊息" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">發送訊息</button>
+                    
+                        <!-- 小卡片 -->
+                        <div id="thankCard">感謝您的訊息，我們已收到！</div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 頁腳 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 攝影師個人作品集. 版權所有.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
