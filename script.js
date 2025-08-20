@@ -53,17 +53,20 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// 導航欄滾動效果
+// 導航欄滾動效果（用 class 控制陰影，不覆蓋透明度變數）
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
     if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        navbar.classList.add('scrolled');
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = 'none';
+        navbar.classList.remove('scrolled');
     }
 });
+
+// 以程式常數設定導覽列透明度（0.50 ~ 1.00）
+const NAVBAR_OPACITY = 0.7; // 想調整時改這裡即可
+document.documentElement.style.setProperty('--navbar-opacity', String(NAVBAR_OPACITY));
 
 // 作品集篩選功能 + 隨機顯示四張
 const filterButtons = document.querySelectorAll('.filter-btn');

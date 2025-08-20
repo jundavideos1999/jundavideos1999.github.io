@@ -12,6 +12,10 @@ body {
     overflow-x: hidden;
 }
 
+:root {
+    --navbar-opacity: 0.95; /* 直接在這裡調整 0.50 ~ 1.00 */
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -23,11 +27,15 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, var(--navbar-opacity));
     backdrop-filter: blur(10px);
     z-index: 1000;
     padding: 1rem 0;
     transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
 }
 
 .nav-container {
@@ -678,6 +686,8 @@ body {
     padding: 2rem 0;
 }
 
+/* 已改為程式內設定透明度，不再顯示控制器 */
+
 /* 動畫 */
 @keyframes fadeInUp {
     from {
@@ -758,7 +768,7 @@ body {
         left: -100%;
         top: 70px;
         flex-direction: column;
-        background-color: rgba(255, 255, 255, 0.98);
+        background-color: rgba(255, 255, 255, var(--navbar-opacity));
         backdrop-filter: blur(10px);
         width: 100%;
         text-align: center;
