@@ -49,8 +49,10 @@
         <!-- 影片背景 -->
         <div class="hero-video-background">
             <video autoplay muted loop playsinline>
+                <!-- 優先播放 .mov -->
+                <source src="videos/hero-video.mov" type="video/quicktime">
+                <!-- 備用 .mp4 -->
                 <source src="videos/hero-video.mp4" type="video/mp4">
-                <!-- <source src="videos/hero-video.webm" type="video/webm"> -->
                 <!-- 如果影片無法播放，顯示後備圖片 -->
                 <img src="images/hero/hero-fallback.jpg" alt="攝影背景">
             </video>
@@ -66,6 +68,7 @@
             </div>
         </div>
     </section>
+    
 
     <!-- 作品集區塊 -->
     <section id="portfolio" class="portfolio">
@@ -361,13 +364,13 @@
                     <div class="skills">
                         <h3>專業技能</h3>
                         <div class="skill-item">
-                            <span>訪談紀錄</span>
+                            <span>人像攝影</span>
                             <div class="skill-bar">
-                                <div class="skill-progress" style="width: 90%"></div>
+                                <div class="skill-progress" style="width: 95%"></div>
                             </div>
                         </div>
                         <div class="skill-item">
-                            <span>活動紀錄</span>
+                            <span>風景攝影</span>
                             <div class="skill-bar">
                                 <div class="skill-progress" style="width: 90%"></div>
                             </div>
@@ -375,7 +378,7 @@
                         <div class="skill-item">
                             <span>商業攝影</span>
                             <div class="skill-bar">
-                                <div class="skill-progress" style="width: 95%"></div>
+                                <div class="skill-progress" style="width: 75%"></div>
                             </div>
                         </div>
                     </div>
