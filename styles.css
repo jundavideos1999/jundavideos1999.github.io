@@ -768,7 +768,7 @@ body {
         left: -100%;
         top: 70px;
         flex-direction: column;
-        background-color: rgba(255, 255, 255, var(--navbar-opacity));
+        background-color: #ffffff; /* 手機展開選單使用不透明背景 */
         backdrop-filter: blur(10px);
         width: 100%;
         text-align: center;

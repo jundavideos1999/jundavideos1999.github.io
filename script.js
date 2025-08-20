@@ -65,7 +65,7 @@ window.addEventListener('scroll', () => {
 });
 
 // 以程式常數設定導覽列透明度（0.50 ~ 1.00）
-const NAVBAR_OPACITY = 0.65; // 想調整時改這裡即可
+const NAVBAR_OPACITY = 0.50; // 想調整時改這裡即可
 document.documentElement.style.setProperty('--navbar-opacity', String(NAVBAR_OPACITY));
 
 // 作品集篩選功能 + 隨機顯示四張
