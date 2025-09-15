@@ -390,6 +390,10 @@ const closeLightbox = () => {
 
 // 改進的作品集項目點擊處理，支援觸控並防止滾動時意外觸發
 portfolioItems.forEach(item => {
+    // 平面攝影的資料夾卡片不套用影片燈箱邏輯
+    if (item.classList.contains('folder')) {
+        return;
+    }
     let touchStartY = 0;
     let touchEndY = 0;
     let touchStartTime = 0;
@@ -643,4 +647,93 @@ document.addEventListener('touchend', function (event) {
     }
     lastTouchEnd = now;
 }, false);
+
+// 平面攝影：資料夾卡片展開/收合
+const initFolderCards = () => {
+    const folderItems = document.querySelectorAll('.portfolio-item.folder');
+    const imageLightbox = document.getElementById('image-lightbox');
+    const imageGallery = document.getElementById('image-gallery');
+    const imageCloseBtn = document.querySelector('.image-close');
+
+    const openImageLightbox = (images, titleText) => {
+        if (!imageLightbox || !imageGallery) return;
+        imageGallery.innerHTML = '';
+        images.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = '參考照片';
+            img.loading = 'lazy';
+            imageGallery.appendChild(img);
+        });
+        const titleEl = document.getElementById('image-title');
+        if (titleEl && titleText) titleEl.textContent = titleText;
+        imageLightbox.classList.add('active');
+        imageLightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeImageLightbox = () => {
+        if (!imageLightbox || !imageGallery) return;
+        imageLightbox.classList.remove('active');
+        imageLightbox.setAttribute('aria-hidden', 'true');
+        imageGallery.innerHTML = '';
+        document.body.style.overflow = '';
+    };
+
+    if (imageCloseBtn) {
+        imageCloseBtn.addEventListener('click', closeImageLightbox);
+        imageCloseBtn.addEventListener('touchend', (e) => { e.preventDefault(); closeImageLightbox(); });
+    }
+    if (imageLightbox) {
+        imageLightbox.addEventListener('click', (e) => {
+            if (e.target === imageLightbox) closeImageLightbox();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && imageLightbox.classList.contains('active')) {
+                closeImageLightbox();
+            }
+        });
+    }
+
+    folderItems.forEach(item => {
+        const cta = item.querySelector('.folder-cta');
+        const galleryImgs = Array.from(item.querySelectorAll('.folder-gallery img')).map(img => img.src);
+        const title = item.querySelector('.folder-title')?.textContent || '平面攝影';
+        if (!cta) return;
+        const handleOpen = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openImageLightbox(galleryImgs, title);
+        };
+        cta.addEventListener('click', handleOpen);
+        cta.addEventListener('touchend', handleOpen);
+    });
+};
+
+// 以事件委派確保動態內容也能開啟燈箱
+window.addEventListener('load', () => {
+    initFolderCards();
+    document.addEventListener('click', (e) => {
+        const cta = e.target.closest('.folder-cta');
+        if (!cta) return;
+        e.preventDefault();
+        const card = cta.closest('.portfolio-item.folder');
+        if (!card) return;
+        const images = Array.from(card.querySelectorAll('.folder-gallery img')).map(img => img.src);
+        const imageLightbox = document.getElementById('image-lightbox');
+        const imageGallery = document.getElementById('image-gallery');
+        if (!imageLightbox || !imageGallery) return;
+        imageGallery.innerHTML = '';
+        images.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = '參考照片';
+            img.loading = 'lazy';
+            imageGallery.appendChild(img);
+        });
+        imageLightbox.classList.add('active');
+        imageLightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    });
+});
 
