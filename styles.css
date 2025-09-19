@@ -1380,3 +1380,53 @@ body {
     }
 }
 
+
+/* 作品集以下區塊調整為非格狀（單欄直向）佈局 */
+/* 關於我改回左右雙欄 */
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.blog-card {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.contact-content > * {
+    margin-bottom: 0;
+}
+
+.contact-content > *:last-child {
+    margin-bottom: 0;
+}
+
+/* 部落格區塊：橫向排列（左到右）、可水平捲動 */
+.blog-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+}
+
+.blog-card {
+    flex: 0 0 360px;
+    scroll-snap-align: start;
+}
+
+@media (max-width: 768px) {
+    .blog-card { flex-basis: 300px; }
+}
+
+/* 聯絡區塊：桌面左右兩欄（手機已在既有媒體查詢改為單欄） */
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+}
+
