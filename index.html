@@ -55,11 +55,10 @@
     <section id="home" class="hero">
         <!-- 影片背景 -->
         <div class="hero-video-background">
-            <video id="hero-bg-video" autoplay muted loop playsinline>
-                <!-- 優先播放 .mov -->
-                <source src="videos/hero-video.mov" type="video/quicktime">
-                <!-- 備用 .mp4 -->
+            <video id="hero-bg-video" autoplay muted loop playsinline preload="auto" poster="images/Logo.png">
+                <!-- 優先使用相容性較佳的 MP4，MOV 作為備援 -->
                 <source src="videos/hero-video.mp4" type="video/mp4">
+                <source src="videos/hero-video.mov" type="video/quicktime">
                 <!-- 如果影片無法播放，顯示後備圖片 -->
                 <img src="images/hero/hero-fallback.jpg" alt="攝影背景">
             </video>
@@ -544,14 +543,14 @@
                     <div class="skills">
                         <h3>專業技能</h3>
                         <ul class="skills-list">
-                            <li>人像攝影</li>
-                            <li>風景攝影</li>
-                            <li>商業攝影</li>
+                            <li>訪談節目</li>
+                            <li>企業形象</li>
                             <li>活動紀錄</li>
-                            <li>訪談影片</li>
+                            <li>線上課程</li>
+                            <li>烘焙節目</li>
+                            <li>前導片</li>
+                            <li>動態攝影</li>
                             <li>短影音製作</li>
-                            <li>線上課程拍攝</li>
-                            <li>後製剪輯</li>
                         </ul>                     
                     </div>
                 </div>

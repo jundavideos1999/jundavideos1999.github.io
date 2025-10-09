@@ -637,10 +637,43 @@ window.addEventListener('load', () => {
     const intro = document.getElementById('intro-video');
     const hero = document.getElementById('hero-bg-video');
 
-    // 先暫停背景影片，確保 LOGO 播完再開始
-    if (hero && !hero.paused) {
-        try { hero.pause(); } catch (_) {}
+    // 行動裝置自動播放保險：確保屬性正確
+    const ensureInlineMutedAutoplay = (videoEl) => {
+        if (!videoEl) return;
+        try {
+            videoEl.muted = true;
+            videoEl.autoplay = true;
+            videoEl.playsInline = true;
+            videoEl.setAttribute('muted', '');
+            videoEl.setAttribute('playsinline', '');
+            videoEl.setAttribute('autoplay', '');
+        } catch (_) {}
+    };
+    ensureInlineMutedAutoplay(hero);
+
+    // 強制禁止 hero 在 LOGO 前自動播放，並重設時間點
+    if (hero) {
+        try {
+            hero.autoplay = false;
+            hero.removeAttribute('autoplay');
+            hero.preload = 'auto';
+            hero.pause();
+            hero.currentTime = 0;
+        } catch (_) {}
     }
+
+    let heroStarted = false;
+    let canStartHero = false; // 只有 LOGO 結束或保險到時才允許
+    const tryStartHero = () => {
+        if (!hero || heroStarted || !canStartHero) return;
+        ensureInlineMutedAutoplay(hero);
+        const p = hero.play();
+        if (p && typeof p.then === 'function') {
+            p.then(() => { heroStarted = true; }).catch(() => {});
+        } else {
+            heroStarted = true;
+        }
+    };
 
     const hideLoaderAndStartHero = () => {
         if (loader) {
@@ -650,15 +683,14 @@ window.addEventListener('load', () => {
             }, 450);
         }
         if (hero) {
-            const p = hero.play();
-            if (p && typeof p.then === 'function') {
-                p.catch(() => {});
-            }
+            try { hero.autoplay = true; hero.setAttribute('autoplay', ''); } catch (_) {}
         }
+        canStartHero = true;
+        tryStartHero();
     };
 
-    // 安全機制：4.8 秒後強制結束（影片 4.5s，稍留緩衝）
-    const safetyTimeoutId = setTimeout(hideLoaderAndStartHero, 2500);
+    // 安全機制：約 2.9 秒後強制結束（需求：LOGO 最多播放 2.8 秒）
+    const safetyTimeoutId = setTimeout(hideLoaderAndStartHero, 2900);
 
     if (intro) {
         // 監聽播放結束
@@ -685,6 +717,20 @@ window.addEventListener('load', () => {
         // 沒有 LOGO 影片元素時，直接開始背景影片
         hideLoaderAndStartHero();
     }
+
+    // 額外保險：頁面可見時再次嘗試播放背景影片（iOS 可能在切換時解鎖 autoplay）
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') tryStartHero();
+    });
+
+    // 首次互動（觸控/點擊）時再嘗試播放背景影片
+    const onFirstUserInteraction = () => {
+        tryStartHero();
+        window.removeEventListener('touchstart', onFirstUserInteraction);
+        window.removeEventListener('click', onFirstUserInteraction);
+    };
+    window.addEventListener('touchstart', onFirstUserInteraction, { once: true, passive: true });
+    window.addEventListener('click', onFirstUserInteraction, { once: true });
 });
 
 // 頁面載入時的淡入效果
