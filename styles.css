@@ -12,6 +12,11 @@ body {
     overflow-x: hidden;
 }
 
+/* 預設全頁背景改為深色，避免初始白屏閃爍 */
+html {
+    background: #000;
+}
+
 :root {
     --navbar-opacity: 0.95; /* 直接在這裡調整 0.50 ~ 1.00 */
 }
@@ -1487,6 +1492,11 @@ body {
         box-shadow: none !important;
         filter: none !important;
         background: transparent !important;
+    }
+    /* 手機端同步調整頁面背景，避免淡入期間白屏 */
+    html,
+    body {
+        background: #474747;
     }
 }
 
