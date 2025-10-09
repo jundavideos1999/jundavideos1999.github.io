@@ -527,33 +527,44 @@ body {
 }
 
 .skills h3 {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     color: #2c3e50;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
-.skill-item {
-    margin-bottom: 1rem;
+.skills-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
 }
 
-.skill-item span {
-    display: block;
-    margin-bottom: 0.5rem;
+.skills-list li {
+    background: #f8f9fa;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
     font-weight: 500;
+    color: #2c3e50;
+    border-left: 4px solid #3498db;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
-.skill-bar {
-    width: 100%;
-    height: 8px;
-    background: #ecf0f1;
-    border-radius: 4px;
-    overflow: hidden;
+.skills-list li:hover {
+    background: #e3f2fd;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
 }
 
-.skill-progress {
-    height: 100%;
-    background: linear-gradient(90deg, #3498db, #2980b9);
-    border-radius: 4px;
-    transition: width 1s ease;
+.skills-list li::before {
+    content: '✓';
+    color: #3498db;
+    font-weight: bold;
+    margin-right: 0.5rem;
 }
 
 .about-image .image-placeholder {
@@ -1080,6 +1091,16 @@ body {
         margin-top: 1.5rem;
     }
 
+    .skills-list {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+
+    .skills-list li {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.95rem;
+    }
+
     /* 部落格區塊 */
     .blog {
         padding: 60px 0;
@@ -1270,6 +1291,11 @@ body {
         object-fit: contain;
     }
 
+    .skills-list li {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
     .contact-item i {
         font-size: 1.5rem;
     }
@@ -1417,6 +1443,50 @@ body {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 4rem;
+    }
+}
+
+/* 頁面載入覆蓋層（LOGO 影片） */
+#page-loader {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+#page-loader.hide {
+    opacity: 0;
+    visibility: hidden;
+}
+
+#page-loader video {
+    width: min(60vw, 520px);
+    height: auto;
+    display: block;
+}
+
+/* 桌面版：LOGO 載入影片滿版覆蓋 */
+@media (min-width: 1024px) {
+    #page-loader video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+/* 手機版：LOGO 載入背景色調 */
+@media (max-width: 768px) {
+    #page-loader {
+        background: #474747;
+    }
+    #page-loader video {
+        box-shadow: none !important;
+        filter: none !important;
+        background: transparent !important;
     }
 }
 

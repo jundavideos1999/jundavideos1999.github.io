@@ -629,9 +629,62 @@ const createBackToTopButton = () => {
 // 初始化返回頂部按鈕
 createBackToTopButton();
 
-// 載入動畫
+// 載入動畫與 LOGO 片頭一次播放邏輯
 window.addEventListener('load', () => {
     document.body.style.opacity = '1';
+
+    const loader = document.getElementById('page-loader');
+    const intro = document.getElementById('intro-video');
+    const hero = document.getElementById('hero-bg-video');
+
+    // 先暫停背景影片，確保 LOGO 播完再開始
+    if (hero && !hero.paused) {
+        try { hero.pause(); } catch (_) {}
+    }
+
+    const hideLoaderAndStartHero = () => {
+        if (loader) {
+            loader.classList.add('hide');
+            setTimeout(() => {
+                loader.parentNode && loader.parentNode.removeChild(loader);
+            }, 450);
+        }
+        if (hero) {
+            const p = hero.play();
+            if (p && typeof p.then === 'function') {
+                p.catch(() => {});
+            }
+        }
+    };
+
+    // 安全機制：4.8 秒後強制結束（影片 4.5s，稍留緩衝）
+    const safetyTimeoutId = setTimeout(hideLoaderAndStartHero, 2500);
+
+    if (intro) {
+        // 監聽播放結束
+        intro.addEventListener('ended', () => {
+            clearTimeout(safetyTimeoutId);
+            hideLoaderAndStartHero();
+        }, { once: true });
+
+        // 嘗試播放 LOGO 影片（靜音 + autoplay 應可在多數瀏覽器啟動）
+        const tryPlayIntro = () => {
+            const playPromise = intro.play();
+            if (playPromise && typeof playPromise.then === 'function') {
+                playPromise.catch(() => {
+                    // 自動播放被阻擋時，改用保險計時結束
+                });
+            }
+        };
+        if (intro.readyState >= 3) {
+            tryPlayIntro();
+        } else {
+            intro.addEventListener('canplaythrough', tryPlayIntro, { once: true });
+        }
+    } else {
+        // 沒有 LOGO 影片元素時，直接開始背景影片
+        hideLoaderAndStartHero();
+    }
 });
 
 // 頁面載入時的淡入效果

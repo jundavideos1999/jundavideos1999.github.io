@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- 載入覆蓋層：LOGO 影片 -->
+    <div id="page-loader" aria-hidden="false" role="status">
+        <video id="intro-video" autoplay muted playsinline aria-label="載入中">
+            <source src="videos/LOGO_video.mp4" type="video/mp4">
+            <!-- 如需更佳相容性，可另提供 MP4 版：videos/LOGO_video.mp4 -->
+        </video>
+    </div>
     <!-- 導航欄 -->
     <nav class="navbar">
         <div class="nav-container">
@@ -48,7 +55,7 @@
     <section id="home" class="hero">
         <!-- 影片背景 -->
         <div class="hero-video-background">
-            <video autoplay muted loop playsinline>
+            <video id="hero-bg-video" autoplay muted loop playsinline>
                 <!-- 優先播放 .mov -->
                 <source src="videos/hero-video.mov" type="video/quicktime">
                 <!-- 備用 .mp4 -->
@@ -96,7 +103,30 @@
                     </div>
                 </div>
 
-                <!-- <活動紀錄部分> -->
+                <!-- <活動紀錄部分> -->               
+
+                <div class="portfolio-item" data-category="event" data-video-url="https://youtube.com/shorts/BCE73UIXH18?si=wycem5rRveVqRCtp">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>【活動紀錄】醴本韓國正統燒肉｜伊甸基金會中秋公益活動</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=nz-SkaDuHrM">
+                    <div class="portfolio-image">
+                        <img src="images/Portfolio/commercial/commercial - 1.jpg" alt="活動紀錄" loading="lazy">
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>活動紀錄</h3>
+                        <p>膺傑表揚會｜葡眾企業股份有限公司</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>
+
                 <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=ktVPlFQ2qkc">
                     <div class="portfolio-image">
                         <div class="image-placeholder"><i class="fas fa-calendar-check"></i></div>
@@ -170,17 +200,6 @@
                     <div class="portfolio-overlay">
                         <h3>活動紀錄</h3>
                         <p>排球共融友誼賽｜母佑會羅蘭青少年中心</p>
-                        <span class="play-badge"><i class="fas fa-play"></i></span>
-                    </div>
-                </div>
-
-                <div class="portfolio-item" data-category="event" data-video-url="https://www.youtube.com/watch?v=nz-SkaDuHrM">
-                    <div class="portfolio-image">
-                        <img src="images/Portfolio/commercial/commercial - 1.jpg" alt="活動紀錄" loading="lazy">
-                    </div>
-                    <div class="portfolio-overlay">
-                        <h3>活動紀錄</h3>
-                        <p>膺傑表揚會｜葡眾企業股份有限公司</p>
                         <span class="play-badge"><i class="fas fa-play"></i></span>
                     </div>
                 </div>
@@ -321,6 +340,17 @@
                 </div>
 
                 <!-- <短影音部分> -->
+                <div class="portfolio-item" data-category="short" data-video-url="https://youtube.com/shorts/aQ0GelZoKZY?si=qG-KcpFLbwqw1VlQ">
+                    <div class="portfolio-image">
+                        <div class="image-placeholder"><i class="fas fa-video"></i></div>
+                    </div>
+                    <div class="portfolio-overlay">
+                        <h3>短影音</h3>
+                        <p>【餐廳形象片】醴本韓國正統燒肉｜VIP尊榮生日禮</p>
+                        <span class="play-badge"><i class="fas fa-play"></i></span>
+                    </div>
+                </div>                
+                
                 <div class="portfolio-item" data-category="short" data-video-url="https://www.youtube.com/watch?v=1KM_mO236NA">
                     <div class="portfolio-image">
                         <div class="image-placeholder"><i class="fas fa-video"></i></div>
@@ -506,33 +536,28 @@
             <div class="about-content">
                 <div class="about-text">
                     <h2 class="section-title">關於我</h2>
-                    <p>我是一名專業攝影師，擁有超過5年的攝影經驗。專精於人像、風景與商業攝影，致力於捕捉每個珍貴的瞬間。</p>
-                    <p>我相信攝影不僅是技術，更是一種藝術表達。每一張照片都承載著故事，每一個角度都訴說著情感。</p>
+                    <p>我是一名影像工作者，投入影像製作至今已邁入第七年，目前與夥伴共同經營 Cine DA，</p>
+                    <p>我們相信影像不只是畫面，更是傳遞心意的方式，
+持續輸出商業與美感兼具的影像作品，
+以真誠的敘事與細膩的視覺語言，
+為品牌打造能與觀眾產生深刻連結的故事。</p>
                     <div class="skills">
                         <h3>專業技能</h3>
-                        <div class="skill-item">
-                            <span>人像攝影</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 95%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span>風景攝影</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <span>商業攝影</span>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 90%"></div>
-                            </div>
-                        </div>
+                        <ul class="skills-list">
+                            <li>人像攝影</li>
+                            <li>風景攝影</li>
+                            <li>商業攝影</li>
+                            <li>活動紀錄</li>
+                            <li>訪談影片</li>
+                            <li>短影音製作</li>
+                            <li>線上課程拍攝</li>
+                            <li>後製剪輯</li>
+                        </ul>                     
                     </div>
                 </div>
-                <!-- <div class="about-image">
-                    <img src="images/Portfolio/1.jpg" alt="攝影師工作照" loading="lazy">
-                </div> -->
+                <div class="about-image">
+                    <img src="images/DA_Working Photo.png" alt="攝影師工作照" loading="lazy">
+                </div>
             </div>
         </div>
     </section>
