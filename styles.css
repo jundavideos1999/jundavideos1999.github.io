@@ -17,6 +17,15 @@ html {
     background: #000;
 }
 
+/* 載入期間禁止滾動 */
+html.no-scroll,
+body.no-scroll {
+    overflow: hidden;
+    height: 100%;
+}
+html.no-scroll { overscroll-behavior: none; }
+body.no-scroll { position: fixed; width: 100%; }
+
 :root {
     --navbar-opacity: 0.95; /* 直接在這裡調整 0.50 ~ 1.00 */
 }
@@ -337,6 +346,27 @@ html {
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+/* 縮圖載入動畫 */
+.thumbnail-loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+    color: #666;
+    font-size: 2rem;
+}
+
+.thumbnail-loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .portfolio-overlay {

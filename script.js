@@ -321,10 +321,23 @@ const setAutoThumbnails = () => {
 
         const id = extractYouTubeId(url);
         if (!id) return;
-        const thumbUrl = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+        
+        // 為短影音使用更高品質的縮圖
+        const category = item.getAttribute('data-category');
+        const thumbUrl = category === 'short' 
+            ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg`  // 最高品質
+            : `https://img.youtube.com/vi/${id}/hqdefault.jpg`;     // 高品質
 
         const container = item.querySelector('.portfolio-image');
         if (!container) return;
+        
+        // 檢查是否為短影音類別，如果是則強制使用自動縮圖
+        const existingImg = container.querySelector('img');
+        
+        // 所有類別：如果已有自訂圖片，則不覆蓋
+        if (existingImg && existingImg.getAttribute('src')) {
+            return;
+        }
         const img = document.createElement('img');
         img.src = thumbUrl;
         const title = item.querySelector('.portfolio-overlay h3');
@@ -651,6 +664,13 @@ window.addEventListener('load', () => {
     };
     ensureInlineMutedAutoplay(hero);
 
+    // 在 LOGO 播放前，禁止滾動與滑塊
+    document.documentElement.classList.add('no-scroll');
+    document.body.classList.add('no-scroll');
+    const preventScroll = (e) => { e.preventDefault(); };
+    window.addEventListener('wheel', preventScroll, { passive: false });
+    window.addEventListener('touchmove', preventScroll, { passive: false });
+
     // 強制禁止 hero 在 LOGO 前自動播放，並重設時間點
     if (hero) {
         try {
@@ -687,6 +707,12 @@ window.addEventListener('load', () => {
         }
         canStartHero = true;
         tryStartHero();
+
+        // 解除禁止滾動
+        document.documentElement.classList.remove('no-scroll');
+        document.body.classList.remove('no-scroll');
+        window.removeEventListener('wheel', preventScroll, { passive: false });
+        window.removeEventListener('touchmove', preventScroll, { passive: false });
     };
 
     // 安全機制：約 2.9 秒後強制結束（需求：LOGO 最多播放 2.8 秒）
