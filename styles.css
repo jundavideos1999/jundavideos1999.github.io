@@ -1128,7 +1128,8 @@ body.no-scroll { position: fixed; width: 100%; }
     }
 
     .skills-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr); /* 手機端改為兩欄，維持元素順序 */
+        grid-auto-flow: row;
         gap: 0.6rem;
     }
 

@@ -8,6 +8,20 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Performance: preconnect & dns-prefetch for external origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://i.ytimg.com" crossorigin>
+    <link rel="dns-prefetch" href="//i.ytimg.com">
+    <link rel="preconnect" href="https://www.youtube.com" crossorigin>
+    <link rel="dns-prefetch" href="//www.youtube.com">
+    <link rel="preconnect" href="https://youtu.be" crossorigin>
+    <link rel="dns-prefetch" href="//youtu.be">
 </head>
 <body>
     <!-- 載入覆蓋層：LOGO 影片 -->
@@ -24,7 +38,7 @@
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="https://tiny-banoffee-9fd1ab.netlify.app/">
-                <img src="images/logo/ICON.png"  alt="DA放異采 Logo" class="nav-logo-img">
+                <img src="images/logo/ICON.png"  alt="DA放異采 Logo" class="nav-logo-img" fetchpriority="high">
                 </a>
                 <h2>Cine DA</h2>
             </div>
@@ -57,7 +71,7 @@
     <section id="home" class="hero">
         <!-- 影片背景 -->
         <div class="hero-video-background">
-            <video id="hero-bg-video" autoplay muted loop playsinline preload="auto" poster="images/Logo.png">
+            <video id="hero-bg-video" autoplay muted loop playsinline preload="metadata" poster="images/Logo.png">
                 <!-- 優先使用相容性較佳的 MP4，MOV 作為備援 -->
                 <source src="videos/hero-video.mp4" type="video/mp4">
                 <source src="videos/hero-video.mov" type="video/quicktime">
@@ -537,11 +551,8 @@
             <div class="about-content">
                 <div class="about-text">
                     <h2 class="section-title">關於我</h2>
-                    <p>我是一名影像工作者，投入影像製作至今已邁入第七年，目前與夥伴共同經營 Cine DA，</p>
-                    <p>我們相信影像不只是畫面，更是傳遞心意的方式，
-持續輸出商業與美感兼具的影像作品，
-以真誠的敘事與細膩的視覺語言，
-為品牌打造能與觀眾產生深刻連結的故事。</p>
+                    <p>我是一名影像工作者，投入影像製作至今已邁入第七年，目前與夥伴共同經營 Cine DA 影像工作室。</p>
+                    <p>我們相信影像不只是畫面，更是傳遞心意的方式，未來會持續傳遞商業與美感兼具的影像作品，為客戶打造與觀眾深刻連結的品牌故事。</p>
                     <div class="skills">
                         <h3>專業技能</h3>
                         <ul class="skills-list">

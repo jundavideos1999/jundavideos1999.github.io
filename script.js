@@ -2,6 +2,29 @@
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
+// Lazy Load 圖片功能
+document.addEventListener("DOMContentLoaded", () => {
+    const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          // 當圖片進入可視區，才真的設定 src 讓它載入
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+          }
+          obs.unobserve(img);
+        }
+      });
+    });
+  
+    lazyImages.forEach(img => {
+      // 如果瀏覽器支援原生 lazy loading，就不需要觀察器
+      if ('loading' in HTMLImageElement.prototype) return;
+      observer.observe(img);
+    });
+  });
+
 hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
@@ -54,7 +77,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // 導航欄滾動效果（用 class 控制陰影，不覆蓋透明度變數）
-window.addEventListener('scroll', () => {
+const applyNavbarShadow = () => {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
     if (window.scrollY > 100) {
@@ -62,7 +85,7 @@ window.addEventListener('scroll', () => {
     } else {
         navbar.classList.remove('scrolled');
     }
-});
+};
 
 // 以程式常數設定導覽列透明度（0.50 ~ 1.00）
 const NAVBAR_OPACITY = 0.70; // 想調整時改這裡即可
@@ -109,65 +132,42 @@ filterButtons.forEach(button => {
 
     // 支援點擊和觸控
     const handleFilter = () => {
-        // 如果是滾動狀態，不觸發篩選
-        if (isScrolling) {
-            return;
-        }
-        
+        if (isScrolling) return;
         filterButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
-
         const filterValue = button.getAttribute('data-filter');
         if (filterValue === 'all') {
             showRandomFourAll();
             return;
         }
-
         const matched = Array.from(portfolioItems).filter(
             item => item.getAttribute('data-category') === filterValue
         );
         showOnlyItems(matched);
     };
 
-    // 觸控開始
     button.addEventListener('touchstart', (e) => {
         touchStartY = e.touches[0].clientY;
         touchStartTime = Date.now();
         isScrolling = false;
-        
-        // 清除之前的滾動超時
-        if (scrollTimeout) {
-            clearTimeout(scrollTimeout);
-        }
+        if (scrollTimeout) clearTimeout(scrollTimeout);
     }, { passive: true });
 
-    // 觸控移動
     button.addEventListener('touchmove', (e) => {
         touchEndY = e.touches[0].clientY;
         const touchDiff = Math.abs(touchEndY - touchStartY);
-        
-        // 如果垂直移動距離超過10px，認為是滾動
-        if (touchDiff > 10) {
-            isScrolling = true;
-        }
+        if (touchDiff > 10) isScrolling = true;
     }, { passive: true });
 
-    // 觸控結束
     button.addEventListener('touchend', (e) => {
         touchEndTime = Date.now();
         const touchDuration = touchEndTime - touchStartTime;
         const touchDiff = Math.abs(touchEndY - touchStartY);
-        
-        // 如果觸控時間短於300ms且移動距離小於10px，認為是點擊
         if (touchDuration < 300 && touchDiff < 10 && !isScrolling) {
             e.preventDefault();
             handleFilter();
         }
-        
-        // 延遲重置滾動狀態，防止快速連續觸控
-        scrollTimeout = setTimeout(() => {
-            isScrolling = false;
-        }, 100);
+        scrollTimeout = setTimeout(() => { isScrolling = false; }, 100);
     });
 
     button.addEventListener('click', handleFilter);
@@ -175,14 +175,11 @@ filterButtons.forEach(button => {
 
 // 技能條動畫
 const skillBars = document.querySelectorAll('.skill-progress');
-
 const animateSkillBars = () => {
     skillBars.forEach(bar => {
         const width = bar.style.width;
         bar.style.width = '0%';
-        setTimeout(() => {
-            bar.style.width = width;
-        }, 500);
+        setTimeout(() => { bar.style.width = width; }, 500);
     });
 };
 
@@ -196,10 +193,7 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 });
-
-if (aboutSection) {
-    observer.observe(aboutSection);
-}
+if (aboutSection) observer.observe(aboutSection);
 
 // 聯絡表單處理
 const contactForm = document.getElementById('contactForm');
@@ -226,13 +220,9 @@ contactForm.addEventListener('submit', (e) => {
     })
     .then((res) => {
         if (res.ok) {
-            // 成功 → 顯示感謝卡片
             thankCard.style.display = 'block';
             contactForm.reset();
-            // 禁用表單所有欄位（不能再輸入或送出）
             Array.from(contactForm.elements).forEach(el => el.disabled = true);
-            
-            // 可選：清空表單內容
             contactForm.reset();
         } else {
             alert("發送失敗，請稍後再試。");
@@ -243,19 +233,13 @@ contactForm.addEventListener('submit', (e) => {
         alert("發送失敗，請檢查網路連線。");
     })
     .finally(() => {
-        // 恢復按鈕
         submitButton.textContent = originalText;
         submitButton.disabled = false;
     });
-
-    
-
 });
-
 
 // 圖片載入動畫
 const imagePlaceholders = document.querySelectorAll('.image-placeholder');
-
 const animateImages = () => {
     imagePlaceholders.forEach((placeholder, index) => {
         setTimeout(() => {
@@ -265,32 +249,20 @@ const animateImages = () => {
     });
 };
 
-// 頁面載入完成後觸發動畫
-window.addEventListener('load', () => {
-    animateImages();
-});
-
 // 滾動動畫
 const scrollElements = document.querySelectorAll('.portfolio-item, .blog-card, .about-content, .contact-content');
-
 const elementInView = (el, dividend = 1) => {
     const elementTop = el.getBoundingClientRect().top;
-    return (
-        elementTop <=
-        (window.innerHeight || document.documentElement.clientHeight) / dividend
-    );
+    return elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend;
 };
-
 const displayScrollElement = (element) => {
     element.style.opacity = '1';
     element.style.transform = 'translateY(0)';
 };
-
 const hideScrollElement = (element) => {
     element.style.opacity = '0';
     element.style.transform = 'translateY(20px)';
 };
-
 const handleScrollAnimation = () => {
     scrollElements.forEach((el) => {
         if (elementInView(el, 1)) {
@@ -300,7 +272,6 @@ const handleScrollAnimation = () => {
         }
     });
 };
-
 // 初始化滾動動畫
 scrollElements.forEach(el => {
     el.style.opacity = '0';
@@ -308,65 +279,44 @@ scrollElements.forEach(el => {
     el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
 });
 
-window.addEventListener('scroll', handleScrollAnimation);
-window.addEventListener('load', handleScrollAnimation);
-
 // 自動設定縮圖（YouTube）
 const setAutoThumbnails = () => {
     const items = document.querySelectorAll('.portfolio-item[data-video-url]');
     items.forEach(item => {
         const url = item.getAttribute('data-video-url');
         if (!url) return;
-        if (!/youtu\.be|youtube\.com/.test(url)) return; // 目前僅針對 YouTube 自動縮圖
-
+        if (!/youtu\.be|youtube\.com/.test(url)) return;
         const id = extractYouTubeId(url);
         if (!id) return;
-        
-        // 為短影音使用更高品質的縮圖
         const category = item.getAttribute('data-category');
         const thumbUrl = category === 'short' 
-            ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg`  // 最高品質
-            : `https://img.youtube.com/vi/${id}/hqdefault.jpg`;     // 高品質
-
+            ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+            : `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
         const container = item.querySelector('.portfolio-image');
         if (!container) return;
-        
-        // 檢查是否為短影音類別，如果是則強制使用自動縮圖
         const existingImg = container.querySelector('img');
-        
-        // 所有類別：如果已有自訂圖片，則不覆蓋
-        if (existingImg && existingImg.getAttribute('src')) {
-            return;
-        }
+        if (existingImg && existingImg.getAttribute('src')) return;
         const img = document.createElement('img');
         img.src = thumbUrl;
         const title = item.querySelector('.portfolio-overlay h3');
         img.alt = title ? title.textContent : '影片縮圖';
         img.loading = 'lazy';
-
-        // 置換原有內容
         container.innerHTML = '';
         container.appendChild(img);
     });
 };
 
-window.addEventListener('load', () => {
-    setAutoThumbnails();
-    showRandomFourAll(); // 預設：全部（all）顯示隨機四張
-});
-
-// 作品集項目點擊播放影片（燈箱）
+// 影片燈箱
 const lightbox = document.getElementById('video-lightbox');
 const videoWrapper = document.getElementById('video-wrapper');
 const videoCloseBtn = document.querySelector('.video-close');
 
 const extractYouTubeId = (url) => {
-    // 支援 youtu.be, watch?v=, shorts, embed 形式
     const patterns = [
-        /(?:v=)([\w-]{6,})/i,                 // watch?v=
-        /youtu\.be\/([\w-]{6,})/i,           // youtu.be/
-        /youtube\.com\/shorts\/([\w-]{6,})/i,// shorts/
-        /youtube\.com\/embed\/([\w-]{6,})/i  // embed/
+        /(?:v=)([\w-]{6,})/i,
+        /youtu\.be\/([\w-]{6,})/i,
+        /youtube\.com\/shorts\/([\w-]{6,})/i,
+        /youtube\.com\/embed\/([\w-]{6,})/i
     ];
     for (const p of patterns) {
         const m = url.match(p);
@@ -403,10 +353,7 @@ const closeLightbox = () => {
 
 // 改進的作品集項目點擊處理，支援觸控並防止滾動時意外觸發
 portfolioItems.forEach(item => {
-    // 平面攝影的資料夾卡片不套用影片燈箱邏輯
-    if (item.classList.contains('folder')) {
-        return;
-    }
+    if (item.classList.contains('folder')) return;
     let touchStartY = 0;
     let touchEndY = 0;
     let touchStartTime = 0;
@@ -415,98 +362,60 @@ portfolioItems.forEach(item => {
     let scrollTimeout;
 
     const handleItemClick = () => {
-        // 如果是滾動狀態，不觸發影片播放
-        if (isScrolling) {
-            return;
-        }
-        
+        if (isScrolling) return;
         const url = item.getAttribute('data-video-url');
-        if (url) {
-            openLightboxWithUrl(url);
-        }
+        if (url) openLightboxWithUrl(url);
     };
 
-    // 觸控開始
     item.addEventListener('touchstart', (e) => {
         touchStartY = e.touches[0].clientY;
         touchStartTime = Date.now();
         isScrolling = false;
-        
-        // 清除之前的滾動超時
-        if (scrollTimeout) {
-            clearTimeout(scrollTimeout);
-        }
+        if (scrollTimeout) clearTimeout(scrollTimeout);
     }, { passive: true });
 
-    // 觸控移動
     item.addEventListener('touchmove', (e) => {
         touchEndY = e.touches[0].clientY;
         const touchDiff = Math.abs(touchEndY - touchStartY);
-        
-        // 如果垂直移動距離超過10px，認為是滾動
-        if (touchDiff > 10) {
-            isScrolling = true;
-        }
+        if (touchDiff > 10) isScrolling = true;
     }, { passive: true });
 
-    // 觸控結束
     item.addEventListener('touchend', (e) => {
         touchEndTime = Date.now();
         const touchDuration = touchEndTime - touchStartTime;
         const touchDiff = Math.abs(touchEndY - touchStartY);
-        
-        // 如果觸控時間短於300ms且移動距離小於10px，認為是點擊
         if (touchDuration < 300 && touchDiff < 10 && !isScrolling) {
             e.preventDefault();
             handleItemClick();
         }
-        
-        // 延遲重置滾動狀態，防止快速連續觸控
-        scrollTimeout = setTimeout(() => {
-            isScrolling = false;
-        }, 100);
+        scrollTimeout = setTimeout(() => { isScrolling = false; }, 100);
     });
 
-    // 保留滑鼠點擊事件
     item.addEventListener('click', handleItemClick);
 });
 
 if (videoCloseBtn) {
     videoCloseBtn.addEventListener('click', closeLightbox);
-    videoCloseBtn.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        closeLightbox();
-    });
+    videoCloseBtn.addEventListener('touchend', (e) => { e.preventDefault(); closeLightbox(); });
 }
 
 if (lightbox) {
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox();
-    });
-    
-    // 支援 ESC 鍵關閉燈箱
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-            closeLightbox();
-        }
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
     });
 }
 
 // 社交媒體連結處理
 const socialLinks = document.querySelectorAll('.social-link');
-
 socialLinks.forEach(link => {
     const handleSocialClick = (e) => {
-        e.preventDefault(); // 防止原本跳轉
-        const url = link.href; // 直接使用 HTML href
-        window.open(url, '_blank'); // 新視窗打開
-    };
-
-    link.addEventListener('click', handleSocialClick);
-    link.addEventListener('touchend', (e) => {
         e.preventDefault();
-        handleSocialClick(e);
-    });
+        const url = link.href;
+        window.open(url, '_blank');
+    };
+    link.addEventListener('click', handleSocialClick);
+    link.addEventListener('touchend', (e) => { e.preventDefault(); handleSocialClick(e); });
 });
 
 // 部落格文章點擊事件
@@ -520,58 +429,35 @@ blogCards.forEach(card => {
     let scrollTimeout;
 
     const handleBlogClick = () => {
-        // 如果是滾動狀態，不觸發點擊事件
-        if (isScrolling) {
-            return;
-        }
-        
+        if (isScrolling) return;
         const title = card.querySelector('h3').textContent;
         console.log(`點擊了部落格文章: ${title}`);
-        // 這裡可以導向詳細的部落格頁面
     };
 
-    // 觸控開始
     card.addEventListener('touchstart', (e) => {
         touchStartY = e.touches[0].clientY;
         touchStartTime = Date.now();
         isScrolling = false;
-        
-        // 清除之前的滾動超時
-        if (scrollTimeout) {
-            clearTimeout(scrollTimeout);
-        }
+        if (scrollTimeout) clearTimeout(scrollTimeout);
     }, { passive: true });
 
-    // 觸控移動
     card.addEventListener('touchmove', (e) => {
         touchEndY = e.touches[0].clientY;
         const touchDiff = Math.abs(touchEndY - touchStartY);
-        
-        // 如果垂直移動距離超過10px，認為是滾動
-        if (touchDiff > 10) {
-            isScrolling = true;
-        }
+        if (touchDiff > 10) isScrolling = true;
     }, { passive: true });
 
-    // 觸控結束
     card.addEventListener('touchend', (e) => {
         touchEndTime = Date.now();
         const touchDuration = touchEndTime - touchStartTime;
         const touchDiff = Math.abs(touchEndY - touchStartY);
-        
-        // 如果觸控時間短於300ms且移動距離小於10px，認為是點擊
         if (touchDuration < 300 && touchDiff < 10 && !isScrolling) {
             e.preventDefault();
             handleBlogClick();
         }
-        
-        // 延遲重置滾動狀態，防止快速連續觸控
-        scrollTimeout = setTimeout(() => {
-            isScrolling = false;
-        }, 100);
+        scrollTimeout = setTimeout(() => { isScrolling = false; }, 100);
     });
 
-    // 保留滑鼠點擊事件
     card.addEventListener('click', handleBlogClick);
 });
 
@@ -599,11 +485,9 @@ const createBackToTopButton = () => {
         font-size: 1.2rem;
         box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
     `;
-    
     document.body.appendChild(backToTop);
-    
-    // 顯示/隱藏按鈕
-    window.addEventListener('scroll', () => {
+
+    const showHideBackToTop = () => {
         if (window.scrollY > 300) {
             backToTop.style.opacity = '1';
             backToTop.style.visibility = 'visible';
@@ -611,32 +495,27 @@ const createBackToTopButton = () => {
             backToTop.style.opacity = '0';
             backToTop.style.visibility = 'hidden';
         }
-    });
-    
-    // 點擊返回頂部
+    };
+
     const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     backToTop.addEventListener('click', scrollToTop);
-    backToTop.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        scrollToTop();
-    });
-    
-    // 懸停效果
+    backToTop.addEventListener('touchend', (e) => { e.preventDefault(); scrollToTop(); });
     backToTop.addEventListener('mouseenter', () => {
         backToTop.style.background = '#2980b9';
         backToTop.style.transform = 'translateY(-3px)';
     });
-    
     backToTop.addEventListener('mouseleave', () => {
         backToTop.style.background = '#3498db';
         backToTop.style.transform = 'translateY(0)';
     });
+
+    // 將顯示/隱藏邏輯交由全域 rAF 滾動管線
+    window.addEventListener('scroll', () => requestScrollJob(showHideBackToTop), { passive: true });
+    // 初始執行一次
+    showHideBackToTop();
 };
 
 // 初始化返回頂部按鈕
@@ -650,7 +529,6 @@ window.addEventListener('load', () => {
     const intro = document.getElementById('intro-video');
     const hero = document.getElementById('hero-bg-video');
 
-    // 行動裝置自動播放保險：確保屬性正確
     const ensureInlineMutedAutoplay = (videoEl) => {
         if (!videoEl) return;
         try {
@@ -664,14 +542,12 @@ window.addEventListener('load', () => {
     };
     ensureInlineMutedAutoplay(hero);
 
-    // 在 LOGO 播放前，禁止滾動與滑塊
     document.documentElement.classList.add('no-scroll');
     document.body.classList.add('no-scroll');
     const preventScroll = (e) => { e.preventDefault(); };
     window.addEventListener('wheel', preventScroll, { passive: false });
     window.addEventListener('touchmove', preventScroll, { passive: false });
 
-    // 強制禁止 hero 在 LOGO 前自動播放，並重設時間點
     if (hero) {
         try {
             hero.autoplay = false;
@@ -683,33 +559,24 @@ window.addEventListener('load', () => {
     }
 
     let heroStarted = false;
-    let canStartHero = false; // 僅在 LOGO 結束後允許
+    let canStartHero = false;
     let introStarted = false;
     const tryStartHero = () => {
         if (!hero || heroStarted || !canStartHero) return;
         ensureInlineMutedAutoplay(hero);
         const p = hero.play();
-        if (p && typeof p.then === 'function') {
-            p.then(() => { heroStarted = true; }).catch(() => {});
-        } else {
-            heroStarted = true;
-        }
+        if (p && typeof p.then === 'function') { p.then(() => { heroStarted = true; }).catch(() => {}); }
+        else { heroStarted = true; }
     };
 
     const hideLoaderAndStartHero = () => {
         if (loader) {
             loader.classList.add('hide');
-            setTimeout(() => {
-                loader.parentNode && loader.parentNode.removeChild(loader);
-            }, 450);
+            setTimeout(() => { loader.parentNode && loader.parentNode.removeChild(loader); }, 450);
         }
-        if (hero) {
-            try { hero.autoplay = true; hero.setAttribute('autoplay', ''); } catch (_) {}
-        }
+        if (hero) { try { hero.autoplay = true; hero.setAttribute('autoplay', ''); } catch (_) {} }
         canStartHero = true;
         tryStartHero();
-
-        // 解除禁止滾動
         document.documentElement.classList.remove('no-scroll');
         document.body.classList.remove('no-scroll');
         window.removeEventListener('wheel', preventScroll, { passive: false });
@@ -717,12 +584,7 @@ window.addEventListener('load', () => {
     };
 
     if (intro) {
-        // 監聽播放結束
-        intro.addEventListener('ended', () => {
-            hideLoaderAndStartHero();
-        }, { once: true });
-
-        // 顯示提示覆蓋層（若自動播放被擋）
+        intro.addEventListener('ended', () => { hideLoaderAndStartHero(); }, { once: true });
         const showIntroPlayOverlay = () => {
             if (document.getElementById('intro-play-overlay')) return;
             const btn = document.createElement('button');
@@ -740,55 +602,33 @@ window.addEventListener('load', () => {
             btn.addEventListener('click', () => {
                 ensureInlineMutedAutoplay(intro);
                 const p = intro.play();
-                if (p && typeof p.then === 'function') {
-                    p.then(() => { introStarted = true; btn.remove(); }).catch(() => {});
-                } else {
-                    introStarted = true;
-                    btn.remove();
-                }
+                if (p && typeof p.then === 'function') { p.then(() => { introStarted = true; btn.remove(); }).catch(() => {}); }
+                else { introStarted = true; btn.remove(); }
             }, { passive: false });
             document.body.appendChild(btn);
         };
-
-        // 嘗試播放 LOGO 影片（靜音 + autoplay）
         const tryPlayIntro = () => {
             const playPromise = intro.play();
             if (playPromise && typeof playPromise.then === 'function') {
-                playPromise.then(() => { introStarted = true; }).catch(() => {
-                    // 自動播放被阻擋 → 顯示點擊開始覆蓋層
-                    showIntroPlayOverlay();
-                });
-            } else {
-                introStarted = true;
-            }
+                playPromise.then(() => { introStarted = true; }).catch(() => { showIntroPlayOverlay(); });
+            } else { introStarted = true; }
         };
-
-        if (intro.readyState >= 2) {
-            tryPlayIntro();
-        } else {
-            intro.addEventListener('canplay', tryPlayIntro, { once: true });
-        }
+        if (intro.readyState >= 2) { tryPlayIntro(); }
+        else { intro.addEventListener('canplay', tryPlayIntro, { once: true }); }
     } else {
-        // 沒有 LOGO 影片元素時，直接開始背景影片
         hideLoaderAndStartHero();
     }
 
-    // 額外保險：頁面可見時再次嘗試播放（iOS 可能在切換時解鎖 autoplay）
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-            if (!introStarted && intro) {
-                try { intro.play().then(() => { introStarted = true; }).catch(() => {}); } catch (_) {}
-            }
+            if (!introStarted && intro) { try { intro.play().then(() => { introStarted = true; }).catch(() => {}); } catch (_) {} }
             tryStartHero();
         }
     });
 
-    // 首次互動（觸控/點擊）：優先嘗試播放 LOGO，播畢才進入
     const onFirstUserInteraction = () => {
         if (intro && !introStarted) {
-            try {
-                intro.play().then(() => { introStarted = true; }).catch(() => {});
-            } catch (_) {}
+            try { intro.play().then(() => { introStarted = true; }).catch(() => {}); } catch (_) {}
         } else {
             tryStartHero();
         }
@@ -807,9 +647,7 @@ document.body.style.transition = 'opacity 0.5s ease';
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function (event) {
     const now = (new Date()).getTime();
-    if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-    }
+    if (now - lastTouchEnd <= 300) { event.preventDefault(); }
     lastTouchEnd = now;
 }, false);
 
@@ -850,14 +688,8 @@ const initFolderCards = () => {
         imageCloseBtn.addEventListener('touchend', (e) => { e.preventDefault(); closeImageLightbox(); });
     }
     if (imageLightbox) {
-        imageLightbox.addEventListener('click', (e) => {
-            if (e.target === imageLightbox) closeImageLightbox();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && imageLightbox.classList.contains('active')) {
-                closeImageLightbox();
-            }
-        });
+        imageLightbox.addEventListener('click', (e) => { if (e.target === imageLightbox) closeImageLightbox(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && imageLightbox.classList.contains('active')) closeImageLightbox(); });
     }
 
     folderItems.forEach(item => {
@@ -865,40 +697,39 @@ const initFolderCards = () => {
         const galleryImgs = Array.from(item.querySelectorAll('.folder-gallery img')).map(img => img.src);
         const title = item.querySelector('.folder-title')?.textContent || '平面攝影';
         if (!cta) return;
-        const handleOpen = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            openImageLightbox(galleryImgs, title);
-        };
+        const handleOpen = (e) => { e.preventDefault(); e.stopPropagation(); openImageLightbox(galleryImgs, title); };
         cta.addEventListener('click', handleOpen);
         cta.addEventListener('touchend', handleOpen);
     });
 };
 
-// 以事件委派確保動態內容也能開啟燈箱
-window.addEventListener('load', () => {
-    initFolderCards();
-    document.addEventListener('click', (e) => {
-        const cta = e.target.closest('.folder-cta');
-        if (!cta) return;
-        e.preventDefault();
-        const card = cta.closest('.portfolio-item.folder');
-        if (!card) return;
-        const images = Array.from(card.querySelectorAll('.folder-gallery img')).map(img => img.src);
-        const imageLightbox = document.getElementById('image-lightbox');
-        const imageGallery = document.getElementById('image-gallery');
-        if (!imageLightbox || !imageGallery) return;
-        imageGallery.innerHTML = '';
-        images.forEach(src => {
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = '參考照片';
-            img.loading = 'lazy';
-            imageGallery.appendChild(img);
+// rAF 滾動管線：合併所有 scroll 工作
+let scrollRafPending = false;
+const scrollJobs = new Set();
+const requestScrollJob = (job) => {
+    if (typeof job === 'function') scrollJobs.add(job);
+    if (!scrollRafPending) {
+        scrollRafPending = true;
+        requestAnimationFrame(() => {
+            scrollRafPending = false;
+            applyNavbarShadow();
+            handleScrollAnimation();
+            scrollJobs.forEach(fn => { try { fn(); } catch (_) {} });
+            scrollJobs.clear();
         });
-        imageLightbox.classList.add('active');
-        imageLightbox.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-    });
+    }
+};
+
+// 綁定一次性的全域 scroll 監聽
+window.addEventListener('scroll', () => requestScrollJob(), { passive: true });
+// 初始觸發一次，避免首屏空白
+requestScrollJob();
+
+// 載入後初始化需要的功能
+window.addEventListener('load', () => {
+    animateImages();
+    setAutoThumbnails();
+    showRandomFourAll();
+    initFolderCards();
 });
 
