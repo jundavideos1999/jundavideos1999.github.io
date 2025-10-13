@@ -1517,9 +1517,13 @@ body.no-scroll { position: fixed; width: 100%; }
 /* 手機版：LOGO 載入背景色調 */
 @media (max-width: 768px) {
     #page-loader {
-        background: #474747;
+        background: #000;
     }
     #page-loader video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
         box-shadow: none !important;
         filter: none !important;
         background: transparent !important;
@@ -1527,9 +1531,55 @@ body.no-scroll { position: fixed; width: 100%; }
     /* 手機端同步調整頁面背景，避免淡入期間白屏 */
     html,
     body {
-        background: #474747;
+        background: #000;
     }
     /* 手機端：移除 Hero 覆蓋層，避免影片偏灰 */
     .hero .video-overlay { display: none; }
+}
+
+/* 手機版載入影片全版適配 - 針對不同螢幕比例優化 */
+@media (max-width: 768px) {
+    #page-loader {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3000;
+    }
+    
+    #page-loader video {
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        object-position: center center;
+        min-width: 100%;
+        min-height: 100%;
+    }
+}
+
+/* 超寬螢幕手機適配 (如 Galaxy Fold 展開狀態) */
+@media (max-width: 768px) and (min-aspect-ratio: 1/1) {
+    #page-loader video {
+        object-fit: contain;
+        object-position: center center;
+    }
+}
+
+/* 極窄螢幕手機適配 (如 iPhone SE) */
+@media (max-width: 375px) {
+    #page-loader video {
+        object-fit: cover;
+        object-position: center center;
+    }
+}
+
+/* 高解析度手機適配 */
+@media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+    #page-loader video {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
 }
 

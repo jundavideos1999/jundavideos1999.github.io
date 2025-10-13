@@ -13,8 +13,10 @@
     <!-- 載入覆蓋層：LOGO 影片 -->
     <div id="page-loader" aria-hidden="false" role="status">
         <video id="intro-video" autoplay muted playsinline aria-label="載入中">
-            <source src="videos/LOGO_video.mp4" type="video/mp4">
-            <!-- 如需更佳相容性，可另提供 MP4 版：videos/LOGO_video.mp4 -->
+            <!-- 桌面版使用原本的 LOGO 影片 -->
+            <source src="videos/LOGO_video.mp4" type="video/mp4" media="(min-width: 769px)">
+            <!-- 手機版使用 4K 手機專用影片 -->
+            <source src="videos/Render in 4K_phone.mp4" type="video/mp4" media="(max-width: 768px)">
         </video>
     </div>
     <!-- 導航欄 -->
