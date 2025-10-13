@@ -683,7 +683,8 @@ window.addEventListener('load', () => {
     }
 
     let heroStarted = false;
-    let canStartHero = false; // 只有 LOGO 結束或保險到時才允許
+    let canStartHero = false; // 僅在 LOGO 結束後允許
+    let introStarted = false;
     const tryStartHero = () => {
         if (!hero || heroStarted || !canStartHero) return;
         ensureInlineMutedAutoplay(hero);
@@ -715,43 +716,82 @@ window.addEventListener('load', () => {
         window.removeEventListener('touchmove', preventScroll, { passive: false });
     };
 
-    // 安全機制：約 2.9 秒後強制結束（需求：LOGO 最多播放 2.8 秒）
-    const safetyTimeoutId = setTimeout(hideLoaderAndStartHero, 2900);
-
     if (intro) {
         // 監聽播放結束
         intro.addEventListener('ended', () => {
-            clearTimeout(safetyTimeoutId);
             hideLoaderAndStartHero();
         }, { once: true });
 
-        // 嘗試播放 LOGO 影片（靜音 + autoplay 應可在多數瀏覽器啟動）
+        // 顯示提示覆蓋層（若自動播放被擋）
+        const showIntroPlayOverlay = () => {
+            if (document.getElementById('intro-play-overlay')) return;
+            const btn = document.createElement('button');
+            btn.id = 'intro-play-overlay';
+            btn.type = 'button';
+            btn.setAttribute('aria-label', '點一下開始');
+            btn.style.cssText = `
+                position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+                background: rgba(0,0,0,0.6); color: #fff; z-index: 3500; border: 0; cursor: pointer;
+            `;
+            const inner = document.createElement('div');
+            inner.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:12px;';
+            inner.innerHTML = '<i class="fas fa-play" style="font-size:28px"></i><span style="font-weight:700">點一下開始</span>';
+            btn.appendChild(inner);
+            btn.addEventListener('click', () => {
+                ensureInlineMutedAutoplay(intro);
+                const p = intro.play();
+                if (p && typeof p.then === 'function') {
+                    p.then(() => { introStarted = true; btn.remove(); }).catch(() => {});
+                } else {
+                    introStarted = true;
+                    btn.remove();
+                }
+            }, { passive: false });
+            document.body.appendChild(btn);
+        };
+
+        // 嘗試播放 LOGO 影片（靜音 + autoplay）
         const tryPlayIntro = () => {
             const playPromise = intro.play();
             if (playPromise && typeof playPromise.then === 'function') {
-                playPromise.catch(() => {
-                    // 自動播放被阻擋時，改用保險計時結束
+                playPromise.then(() => { introStarted = true; }).catch(() => {
+                    // 自動播放被阻擋 → 顯示點擊開始覆蓋層
+                    showIntroPlayOverlay();
                 });
+            } else {
+                introStarted = true;
             }
         };
-        if (intro.readyState >= 3) {
+
+        if (intro.readyState >= 2) {
             tryPlayIntro();
         } else {
-            intro.addEventListener('canplaythrough', tryPlayIntro, { once: true });
+            intro.addEventListener('canplay', tryPlayIntro, { once: true });
         }
     } else {
         // 沒有 LOGO 影片元素時，直接開始背景影片
         hideLoaderAndStartHero();
     }
 
-    // 額外保險：頁面可見時再次嘗試播放背景影片（iOS 可能在切換時解鎖 autoplay）
+    // 額外保險：頁面可見時再次嘗試播放（iOS 可能在切換時解鎖 autoplay）
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') tryStartHero();
+        if (document.visibilityState === 'visible') {
+            if (!introStarted && intro) {
+                try { intro.play().then(() => { introStarted = true; }).catch(() => {}); } catch (_) {}
+            }
+            tryStartHero();
+        }
     });
 
-    // 首次互動（觸控/點擊）時再嘗試播放背景影片
+    // 首次互動（觸控/點擊）：優先嘗試播放 LOGO，播畢才進入
     const onFirstUserInteraction = () => {
-        tryStartHero();
+        if (intro && !introStarted) {
+            try {
+                intro.play().then(() => { introStarted = true; }).catch(() => {});
+            } catch (_) {}
+        } else {
+            tryStartHero();
+        }
         window.removeEventListener('touchstart', onFirstUserInteraction);
         window.removeEventListener('click', onFirstUserInteraction);
     };
