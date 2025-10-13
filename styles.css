@@ -1517,7 +1517,12 @@ body.no-scroll { position: fixed; width: 100%; }
 /* 手機版：LOGO 載入背景色調 */
 @media (max-width: 768px) {
     #page-loader {
-        background: #000;
+        /* 使用 LOGO 畫面做為載入背景，避免黑屏 */
+        background-color: #000; /* 若圖片未載入時的底色 */
+        background-image: url('images/Logo.png');
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: contain;
     }
     #page-loader video {
         width: 100%;
