@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const img = entry.target;
-          // 當圖片進入可視區，才真的設定 src 讓它載入
           if (img.dataset.src) {
             img.src = img.dataset.src;
           }
@@ -19,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   
     lazyImages.forEach(img => {
-      // 如果瀏覽器支援原生 lazy loading，就不需要觀察器
       if ('loading' in HTMLImageElement.prototype) return;
       observer.observe(img);
     });
@@ -28,8 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
 hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
-    
-    // 防止背景滾動
     if (navMenu.classList.contains('active')) {
         document.body.style.overflow = 'hidden';
     } else {
@@ -59,36 +55,24 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            // 關閉導航選單（如果開啟）
             hamburger.classList.remove('active');
             navMenu.classList.remove('active');
             document.body.style.overflow = '';
-            
-            // 計算偏移量（考慮固定導航欄高度）
             const navHeight = document.querySelector('.navbar').offsetHeight;
             const targetPosition = target.offsetTop - navHeight;
-            
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: targetPosition, behavior: 'smooth' });
         }
     });
 });
 
-// 導航欄滾動效果（用 class 控制陰影，不覆蓋透明度變數）
 const applyNavbarShadow = () => {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
-    if (window.scrollY > 100) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
+    if (window.scrollY > 100) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
 };
 
-// 以程式常數設定導覽列透明度（0.50 ~ 1.00）
-const NAVBAR_OPACITY = 0.70; // 想調整時改這裡即可
+const NAVBAR_OPACITY = 0.70;
 document.documentElement.style.setProperty('--navbar-opacity', String(NAVBAR_OPACITY));
 
 // 作品集篩選功能 + 隨機顯示四張
@@ -121,7 +105,6 @@ const showRandomFourAll = () => {
     showOnlyItems(pick);
 };
 
-// 改進的篩選功能，支援觸控並防止滾動時意外觸發
 filterButtons.forEach(button => {
     let touchStartY = 0;
     let touchEndY = 0;
@@ -130,19 +113,13 @@ filterButtons.forEach(button => {
     let isScrolling = false;
     let scrollTimeout;
 
-    // 支援點擊和觸控
     const handleFilter = () => {
         if (isScrolling) return;
         filterButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
         const filterValue = button.getAttribute('data-filter');
-        if (filterValue === 'all') {
-            showRandomFourAll();
-            return;
-        }
-        const matched = Array.from(portfolioItems).filter(
-            item => item.getAttribute('data-category') === filterValue
-        );
+        if (filterValue === 'all') { showRandomFourAll(); return; }
+        const matched = Array.from(portfolioItems).filter(item => item.getAttribute('data-category') === filterValue);
         showOnlyItems(matched);
     };
 
@@ -155,15 +132,13 @@ filterButtons.forEach(button => {
 
     button.addEventListener('touchmove', (e) => {
         touchEndY = e.touches[0].clientY;
-        const touchDiff = Math.abs(touchEndY - touchStartY);
-        if (touchDiff > 10) isScrolling = true;
+        if (Math.abs(touchEndY - touchStartY) > 10) isScrolling = true;
     }, { passive: true });
 
     button.addEventListener('touchend', (e) => {
         touchEndTime = Date.now();
         const touchDuration = touchEndTime - touchStartTime;
-        const touchDiff = Math.abs(touchEndY - touchStartY);
-        if (touchDuration < 300 && touchDiff < 10 && !isScrolling) {
+        if (touchDuration < 300 && Math.abs(touchEndY - touchStartY) < 10 && !isScrolling) {
             e.preventDefault();
             handleFilter();
         }
@@ -183,7 +158,6 @@ const animateSkillBars = () => {
     });
 };
 
-// 當關於我區塊進入視窗時觸發技能條動畫
 const aboutSection = document.querySelector('.about');
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -201,18 +175,11 @@ const thankCard = document.getElementById('thankCard');
 
 contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
-
     const submitButton = contactForm.querySelector('button[type="submit"]');
     const originalText = submitButton.textContent;
-
-    // 顯示載入狀態
     submitButton.textContent = '發送中...';
     submitButton.disabled = true;
-
-    // 準備表單資料
     const formData = new FormData(contactForm);
-
-    // 用 fetch 傳給 Netlify
     fetch("/", {
         method: "POST",
         body: new URLSearchParams(formData).toString(),
@@ -255,24 +222,14 @@ const elementInView = (el, dividend = 1) => {
     const elementTop = el.getBoundingClientRect().top;
     return elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend;
 };
-const displayScrollElement = (element) => {
-    element.style.opacity = '1';
-    element.style.transform = 'translateY(0)';
-};
-const hideScrollElement = (element) => {
-    element.style.opacity = '0';
-    element.style.transform = 'translateY(20px)';
-};
+const displayScrollElement = (element) => { element.style.opacity = '1'; element.style.transform = 'translateY(0)'; };
+const hideScrollElement = (element) => { element.style.opacity = '0'; element.style.transform = 'translateY(20px)'; };
 const handleScrollAnimation = () => {
     scrollElements.forEach((el) => {
-        if (elementInView(el, 1)) {
-            displayScrollElement(el);
-        } else {
-            hideScrollElement(el);
-        }
+        if (elementInView(el, 1)) displayScrollElement(el);
+        else hideScrollElement(el);
     });
 };
-// 初始化滾動動畫
 scrollElements.forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
@@ -351,7 +308,6 @@ const closeLightbox = () => {
     document.body.style.overflow = '';
 };
 
-// 改進的作品集項目點擊處理，支援觸控並防止滾動時意外觸發
 portfolioItems.forEach(item => {
     if (item.classList.contains('folder')) return;
     let touchStartY = 0;
@@ -376,15 +332,13 @@ portfolioItems.forEach(item => {
 
     item.addEventListener('touchmove', (e) => {
         touchEndY = e.touches[0].clientY;
-        const touchDiff = Math.abs(touchEndY - touchStartY);
-        if (touchDiff > 10) isScrolling = true;
+        if (Math.abs(touchEndY - touchStartY) > 10) isScrolling = true;
     }, { passive: true });
 
     item.addEventListener('touchend', (e) => {
         touchEndTime = Date.now();
         const touchDuration = touchEndTime - touchStartTime;
-        const touchDiff = Math.abs(touchEndY - touchStartY);
-        if (touchDuration < 300 && touchDiff < 10 && !isScrolling) {
+        if (touchDuration < 300 && Math.abs(touchEndY - touchStartY) < 10 && !isScrolling) {
             e.preventDefault();
             handleItemClick();
         }
@@ -401,9 +355,7 @@ if (videoCloseBtn) {
 
 if (lightbox) {
     lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
-    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox(); });
 }
 
 // 社交媒體連結處理
@@ -443,15 +395,13 @@ blogCards.forEach(card => {
 
     card.addEventListener('touchmove', (e) => {
         touchEndY = e.touches[0].clientY;
-        const touchDiff = Math.abs(touchEndY - touchStartY);
-        if (touchDiff > 10) isScrolling = true;
+        if (Math.abs(touchEndY - touchStartY) > 10) isScrolling = true;
     }, { passive: true });
 
     card.addEventListener('touchend', (e) => {
         touchEndTime = Date.now();
         const touchDuration = touchEndTime - touchStartTime;
-        const touchDiff = Math.abs(touchEndY - touchStartY);
-        if (touchDuration < 300 && touchDiff < 10 && !isScrolling) {
+        if (touchDuration < 300 && Math.abs(touchEndY - touchStartY) < 10 && !isScrolling) {
             e.preventDefault();
             handleBlogClick();
         }
@@ -497,9 +447,7 @@ const createBackToTopButton = () => {
         }
     };
 
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
     backToTop.addEventListener('click', scrollToTop);
     backToTop.addEventListener('touchend', (e) => { e.preventDefault(); scrollToTop(); });
@@ -512,13 +460,10 @@ const createBackToTopButton = () => {
         backToTop.style.transform = 'translateY(0)';
     });
 
-    // 將顯示/隱藏邏輯交由全域 rAF 滾動管線
     window.addEventListener('scroll', () => requestScrollJob(showHideBackToTop), { passive: true });
-    // 初始執行一次
     showHideBackToTop();
 };
 
-// 初始化返回頂部按鈕
 createBackToTopButton();
 
 // 載入動畫與 LOGO 片頭一次播放邏輯
@@ -527,6 +472,7 @@ window.addEventListener('load', () => {
 
     const loader = document.getElementById('page-loader');
     const intro = document.getElementById('intro-video');
+    const introFallback = document.getElementById('intro-fallback');
     const hero = document.getElementById('hero-bg-video');
 
     const ensureInlineMutedAutoplay = (videoEl) => {
@@ -561,6 +507,14 @@ window.addEventListener('load', () => {
     let heroStarted = false;
     let canStartHero = false;
     let introStarted = false;
+    let loaderHidden = false;
+
+    const removeIntroFallback = () => {
+        if (introFallback && introFallback.parentNode) {
+            introFallback.parentNode.removeChild(introFallback);
+        }
+    };
+
     const tryStartHero = () => {
         if (!hero || heroStarted || !canStartHero) return;
         ensureInlineMutedAutoplay(hero);
@@ -570,6 +524,8 @@ window.addEventListener('load', () => {
     };
 
     const hideLoaderAndStartHero = () => {
+        if (loaderHidden) return;
+        loaderHidden = true;
         if (loader) {
             loader.classList.add('hide');
             setTimeout(() => { loader.parentNode && loader.parentNode.removeChild(loader); }, 450);
@@ -583,8 +539,22 @@ window.addEventListener('load', () => {
         window.removeEventListener('touchmove', preventScroll, { passive: false });
     };
 
+    const INTRO_MAX_WAIT_MS = 3500; // 最長等待 3.5s 就進場，避免黑屏
+    const introTimeout = setTimeout(() => {
+        hideLoaderAndStartHero();
+    }, INTRO_MAX_WAIT_MS);
+
     if (intro) {
-        intro.addEventListener('ended', () => { hideLoaderAndStartHero(); }, { once: true });
+        // 影片一旦可播放或開始播放，移除圖片後備，避免重疊
+        const clearFallback = () => { removeIntroFallback(); };
+        intro.addEventListener('loadeddata', clearFallback, { once: true });
+        intro.addEventListener('play', clearFallback, { once: true });
+
+        intro.addEventListener('ended', () => {
+            clearTimeout(introTimeout);
+            hideLoaderAndStartHero();
+        }, { once: true });
+
         const showIntroPlayOverlay = () => {
             if (document.getElementById('intro-play-overlay')) return;
             const btn = document.createElement('button');
@@ -602,17 +572,22 @@ window.addEventListener('load', () => {
             btn.addEventListener('click', () => {
                 ensureInlineMutedAutoplay(intro);
                 const p = intro.play();
-                if (p && typeof p.then === 'function') { p.then(() => { introStarted = true; btn.remove(); }).catch(() => {}); }
-                else { introStarted = true; btn.remove(); }
+                if (p && typeof p.then === 'function') {
+                    p.then(() => { introStarted = true; btn.remove(); removeIntroFallback(); }).catch(() => {});
+                } else {
+                    introStarted = true; btn.remove(); removeIntroFallback();
+                }
             }, { passive: false });
             document.body.appendChild(btn);
         };
+
         const tryPlayIntro = () => {
             const playPromise = intro.play();
             if (playPromise && typeof playPromise.then === 'function') {
-                playPromise.then(() => { introStarted = true; }).catch(() => { showIntroPlayOverlay(); });
-            } else { introStarted = true; }
+                playPromise.then(() => { introStarted = true; removeIntroFallback(); }).catch(() => { showIntroPlayOverlay(); });
+            } else { introStarted = true; removeIntroFallback(); }
         };
+
         if (intro.readyState >= 2) { tryPlayIntro(); }
         else { intro.addEventListener('canplay', tryPlayIntro, { once: true }); }
     } else {
@@ -621,14 +596,14 @@ window.addEventListener('load', () => {
 
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-            if (!introStarted && intro) { try { intro.play().then(() => { introStarted = true; }).catch(() => {}); } catch (_) {} }
+            if (!introStarted && intro) { try { intro.play().then(() => { introStarted = true; removeIntroFallback(); }).catch(() => {}); } catch (_) {} }
             tryStartHero();
         }
     });
 
     const onFirstUserInteraction = () => {
         if (intro && !introStarted) {
-            try { intro.play().then(() => { introStarted = true; }).catch(() => {}); } catch (_) {}
+            try { intro.play().then(() => { introStarted = true; removeIntroFallback(); }).catch(() => {}); } catch (_) {}
         } else {
             tryStartHero();
         }
@@ -643,7 +618,6 @@ window.addEventListener('load', () => {
 document.body.style.opacity = '0';
 document.body.style.transition = 'opacity 0.5s ease';
 
-// 防止雙擊縮放（iOS）
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function (event) {
     const now = (new Date()).getTime();
@@ -651,7 +625,6 @@ document.addEventListener('touchend', function (event) {
     lastTouchEnd = now;
 }, false);
 
-// 平面攝影：資料夾卡片展開/收合
 const initFolderCards = () => {
     const folderItems = document.querySelectorAll('.portfolio-item.folder');
     const imageLightbox = document.getElementById('image-lightbox');
@@ -703,7 +676,6 @@ const initFolderCards = () => {
     });
 };
 
-// rAF 滾動管線：合併所有 scroll 工作
 let scrollRafPending = false;
 const scrollJobs = new Set();
 const requestScrollJob = (job) => {
@@ -720,12 +692,9 @@ const requestScrollJob = (job) => {
     }
 };
 
-// 綁定一次性的全域 scroll 監聽
 window.addEventListener('scroll', () => requestScrollJob(), { passive: true });
-// 初始觸發一次，避免首屏空白
 requestScrollJob();
 
-// 載入後初始化需要的功能
 window.addEventListener('load', () => {
     animateImages();
     setAutoThumbnails();
