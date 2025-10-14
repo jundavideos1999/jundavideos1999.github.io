@@ -483,6 +483,7 @@ window.addEventListener('load', () => {
             videoEl.playsInline = true;
             videoEl.setAttribute('muted', '');
             videoEl.setAttribute('playsinline', '');
+            videoEl.setAttribute('webkit-playsinline', '');
             videoEl.setAttribute('autoplay', '');
         } catch (_) {}
     };
@@ -517,12 +518,25 @@ window.addEventListener('load', () => {
         }
     };
 
+    const markPlaying = (v) => { try { v.classList.add('is-playing'); } catch (_) {} };
+
+    const attachPlayingHandlers = (v) => {
+        if (!v) return;
+        const onPlaying = () => { markPlaying(v); };
+        v.addEventListener('playing', onPlaying, { once: true });
+        v.addEventListener('canplay', onPlaying, { once: true });
+        v.addEventListener('loadeddata', () => { try { v.play().catch(() => {}); } catch (_) {} }, { once: true });
+    };
+
+    attachPlayingHandlers(intro);
+    attachPlayingHandlers(hero);
+
     const tryStartHero = () => {
         if (!hero || heroStarted || !canStartHero) return;
         ensureInlineMutedAutoplay(hero);
         const p = hero.play();
-        if (p && typeof p.then === 'function') { p.then(() => { heroStarted = true; }).catch(() => {}); }
-        else { heroStarted = true; }
+        if (p && typeof p.then === 'function') { p.then(() => { heroStarted = true; markPlaying(hero); }).catch(() => {}); }
+        else { heroStarted = true; markPlaying(hero); }
     };
 
     const hideLoaderAndStartHero = () => {
@@ -601,8 +615,8 @@ window.addEventListener('load', () => {
         const tryPlayIntro = () => {
             const playPromise = intro.play();
             if (playPromise && typeof playPromise.then === 'function') {
-                playPromise.then(() => { introStarted = true; removeIntroFallback(); }).catch(() => { showIntroPlayOverlay(); });
-            } else { introStarted = true; removeIntroFallback(); }
+                playPromise.then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); }).catch(() => { showIntroPlayOverlay(); });
+            } else { introStarted = true; markPlaying(intro); removeIntroFallback(); }
         };
 
         intro.addEventListener('canplay', () => {
@@ -620,7 +634,7 @@ window.addEventListener('load', () => {
 
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-            if (!introStarted && intro) { try { intro.play().then(() => { introStarted = true; removeIntroFallback(); }).catch(() => {}); } catch (_) {} }
+            if (!introStarted && intro) { try { intro.play().then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); }).catch(() => {}); } catch (_) {} }
             tryStartHero();
         }
     });
@@ -629,7 +643,7 @@ window.addEventListener('load', () => {
     if (!window.matchMedia('(max-width: 768px)').matches) {
         const onFirstUserInteraction = () => {
             if (intro && !introStarted) {
-                try { intro.play().then(() => { introStarted = true; removeIntroFallback(); }).catch(() => {}); } catch (_) {}
+                try { intro.play().then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); }).catch(() => {}); } catch (_) {}
             } else {
                 tryStartHero();
             }
@@ -638,6 +652,18 @@ window.addEventListener('load', () => {
         };
         window.addEventListener('touchstart', onFirstUserInteraction, { once: true, passive: true });
         window.addEventListener('click', onFirstUserInteraction, { once: true });
+    }
+
+    // 行動端保險：首次觸控即嘗試播放 intro 與 hero，並標記播放中以淡入
+    if (window.matchMedia('(max-width: 768px)').matches) {
+        const onFirstTouchMobile = () => {
+            if (intro && !introStarted) {
+                try { intro.play().then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); }).catch(() => {}); } catch (_) {}
+            }
+            tryStartHero();
+            window.removeEventListener('touchstart', onFirstTouchMobile);
+        };
+        window.addEventListener('touchstart', onFirstTouchMobile, { once: true, passive: true });
     }
 });
 

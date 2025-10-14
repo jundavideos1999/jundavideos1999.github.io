@@ -154,6 +154,10 @@ body.no-scroll { position: fixed; width: 100%; }
     object-position: center;
 }
 
+/* 自動播放影片：播放前先隱藏，播放後淡入，避免顯示播放圖示 */
+.video-autoplay { opacity: 0; transition: opacity 300ms ease; }
+.video-autoplay.is-playing { opacity: 1; }
+
 .hero-video-background img {
     width: 100%;
     height: 100%;
@@ -528,6 +532,24 @@ body.no-scroll { position: fixed; width: 100%; }
 }
 
 @media (max-width: 768px) {
+    /* 盡可能隱藏行動端原生控制與播放按鈕（不同廠商實作差異大，盡量壓制） */
+    video::-webkit-media-controls,
+    video::-webkit-media-controls-panel,
+    video::-webkit-media-controls-play-button,
+    video::-webkit-media-controls-volume-slider,
+    video::-webkit-media-controls-mute-button,
+    video::-webkit-media-controls-timeline,
+    video::-webkit-media-controls-current-time-display,
+    video::-webkit-media-controls-time-remaining-display,
+    video::-webkit-media-controls-fullscreen-button,
+    video::-webkit-media-controls-enclosure,
+    video::-webkit-media-controls-overlay-play-button,
+    video::-webkit-media-controls-start-playback-button {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        -webkit-appearance: none !important;
+    }
     /* 隱藏行動裝置預設影片播放控制與中心播放圖示（確保初始無播放圖樣） */
     video::-webkit-media-controls {
         display: none !important;
