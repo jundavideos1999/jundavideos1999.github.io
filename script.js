@@ -599,7 +599,13 @@ window.addEventListener('load', () => {
     if (intro) {
         const clearFallback = () => { removeIntroFallback(); };
         intro.addEventListener('loadeddata', clearFallback, { once: true });
-        intro.addEventListener('play', clearFallback, { once: true });
+        intro.addEventListener('play', () => {
+            clearFallback();
+            // 固定 3.5 秒後關閉載入層並啟動 hero（不需使用者互動）
+            try { if (introTimeout) clearTimeout(introTimeout); } catch (_) {}
+            const FORCE_HIDE_MS = 3500;
+            setTimeout(() => { hideLoaderAndStartHero(); }, FORCE_HIDE_MS);
+        }, { once: true });
 
         intro.addEventListener('ended', () => {
             if (introTimeout) clearTimeout(introTimeout);
