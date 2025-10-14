@@ -287,13 +287,13 @@ const openLightboxWithUrl = (url) => {
     let embed;
     if (/youtu\.be|youtube\.com/.test(url)) {
         const videoId = extractYouTubeId(url);
-        embed = `<iframe src=\"https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0\" frameborder=\"0\" allow=\"autoplay; encrypted-media\" allowfullscreen></iframe>`;
+        embed = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
     } else if (/vimeo\.com/.test(url)) {
         const idMatch = url.match(/vimeo\.com\/(\d+)/);
         const id = idMatch ? idMatch[1] : '';
-        embed = `<iframe src=\"https://player.vimeo.com/video/${id}?autoplay=1\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>`;
+        embed = `<iframe src="https://player.vimeo.com/video/${id}?autoplay=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
     } else {
-        embed = `<video src=\"${url}\" controls autoplay playsinline></video>`;
+        embed = `<video src="${url}" controls autoplay playsinline></video>`;
     }
     videoWrapper.innerHTML = embed;
     lightbox.classList.add('active');
@@ -539,7 +539,16 @@ window.addEventListener('load', () => {
         document.body.classList.remove('no-scroll');
         window.removeEventListener('wheel', preventScroll, { passive: false });
         window.removeEventListener('touchmove', preventScroll, { passive: false });
+        if (isMobile) {
+            document.removeEventListener('click', preventClicksDuringLoader, true);
+        }
     };
+
+    // 行動裝置：阻擋載入期間的點擊互動
+    const preventClicksDuringLoader = (e) => { e.preventDefault(); e.stopPropagation(); };
+    if (isMobile) {
+        document.addEventListener('click', preventClicksDuringLoader, true);
+    }
 
     // 加入超時保險：桌面 3.5s；手機 4s
     let introTimeout;
@@ -562,6 +571,7 @@ window.addEventListener('load', () => {
         }, { once: true });
 
         const showIntroPlayOverlay = () => {
+            if (isMobile) return; // 行動裝置不顯示點擊啟動覆蓋層
             if (document.getElementById('intro-play-overlay')) return;
             const btn = document.createElement('button');
             btn.id = 'intro-play-overlay';
@@ -607,17 +617,20 @@ window.addEventListener('load', () => {
         }
     });
 
-    const onFirstUserInteraction = () => {
-        if (intro && !introStarted) {
-            try { intro.play().then(() => { introStarted = true; removeIntroFallback(); }).catch(() => {}); } catch (_) {}
-        } else {
-            tryStartHero();
-        }
-        window.removeEventListener('touchstart', onFirstUserInteraction);
-        window.removeEventListener('click', onFirstUserInteraction);
-    };
-    window.addEventListener('touchstart', onFirstUserInteraction, { once: true, passive: true });
-    window.addEventListener('click', onFirstUserInteraction, { once: true });
+    // 桌面端保留首次互動保險；手機端不註冊任何點擊啟動
+    if (!window.matchMedia('(max-width: 768px)').matches) {
+        const onFirstUserInteraction = () => {
+            if (intro && !introStarted) {
+                try { intro.play().then(() => { introStarted = true; removeIntroFallback(); }).catch(() => {}); } catch (_) {}
+            } else {
+                tryStartHero();
+            }
+            window.removeEventListener('touchstart', onFirstUserInteraction);
+            window.removeEventListener('click', onFirstUserInteraction);
+        };
+        window.addEventListener('touchstart', onFirstUserInteraction, { once: true, passive: true });
+        window.addEventListener('click', onFirstUserInteraction, { once: true });
+    }
 });
 
 // 頁面載入時的淡入效果
@@ -632,7 +645,7 @@ document.addEventListener('touchend', function (event) {
 }, false);
 
 const initFolderCards = () => {
-    const folderItems = document.querySelectorAll('.portfolio-item.folder');
+    const folderCardItems = document.querySelectorAll('.portfolio-item.folder');
     const imageLightbox = document.getElementById('image-lightbox');
     const imageGallery = document.getElementById('image-gallery');
     const imageCloseBtn = document.querySelector('.image-close');
@@ -671,7 +684,7 @@ const initFolderCards = () => {
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && imageLightbox.classList.contains('active')) closeImageLightbox(); });
     }
 
-    folderItems.forEach(item => {
+    folderCardItems.forEach(item => {
         const cta = item.querySelector('.folder-cta');
         const galleryImgs = Array.from(item.querySelectorAll('.folder-gallery img')).map(img => img.src);
         const title = item.querySelector('.folder-title')?.textContent || '平面攝影';
