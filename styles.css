@@ -1513,6 +1513,7 @@ body.no-scroll { position: fixed; width: 100%; }
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 .intro-spinner {

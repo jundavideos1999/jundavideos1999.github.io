@@ -528,6 +528,7 @@ window.addEventListener('load', () => {
     const hideLoaderAndStartHero = () => {
         if (loaderHidden) return;
         loaderHidden = true;
+        removeIntroFallback();
         if (loader) {
             loader.classList.add('hide');
             setTimeout(() => { loader.parentNode && loader.parentNode.removeChild(loader); }, 450);
