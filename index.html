@@ -22,6 +22,11 @@
     <link rel="dns-prefetch" href="//www.youtube.com">
     <link rel="preconnect" href="https://youtu.be" crossorigin>
     <link rel="dns-prefetch" href="//youtu.be">
+
+    <!-- 預先載入關鍵影片資源（行動版與桌面版 LOGO 片頭 + 首頁背景） -->
+    <link rel="preload" as="video" href="videos/LOGO_video.mp4" type="video/mp4" media="(min-width: 769px)">
+    <link rel="preload" as="video" href="videos/Render in 4K_phone.mp4" type="video/mp4" media="(max-width: 768px)">
+    <link rel="preload" as="video" href="videos/hero-video.mp4" type="video/mp4">
 </head>
 <body>
     <!-- 載入覆蓋層：LOGO 影片 -->
@@ -75,10 +80,9 @@
     <section id="home" class="hero">
         <!-- 影片背景 -->
         <div class="hero-video-background">
-            <video id="hero-bg-video" class="video-autoplay" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="metadata" poster="images/Loading_background.png" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback nofullscreen">
+            <video id="hero-bg-video" class="video-autoplay" autoplay muted loop playsinline webkit-playsinline x5-playsinline preload="auto" poster="images/Loading_background.png" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback nofullscreen">
                 <!-- 優先使用相容性較佳的 MP4，MOV 作為備援 -->
                 <source src="videos/hero-video.mp4" type="video/mp4">
-                <source src="videos/hero-video.mov" type="video/quicktime">
                 <!-- 如果影片無法播放，顯示後備圖片 -->
                 <img src="images/Loading_background.png" alt="攝影背景">
             </video>

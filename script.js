@@ -550,14 +550,23 @@ window.addEventListener('load', () => {
     const tryStartHero = () => {
         if (!hero || heroStarted || !canStartHero) return;
         ensureInlineMutedAutoplay(hero);
-        const p = hero.play();
-        if (p && typeof p.then === 'function') {
-            p.then(() => { heroStarted = true; markPlaying(hero); })
-             .catch(async () => {
-                const ok = await autoplayRetry(hero, { max: 10, delayMs: 200 });
+        const start = async () => {
+            try {
+                const p = hero.play();
+                if (p && typeof p.then === 'function') await p;
+                heroStarted = true; markPlaying(hero);
+            } catch (_) {
+                const ok = await autoplayRetry(hero, { max: 12, delayMs: 250 });
                 if (ok) { heroStarted = true; markPlaying(hero); }
-             });
-        } else { heroStarted = true; markPlaying(hero); }
+            }
+        };
+        if (hero.readyState >= 3) { start(); } // HAVE_FUTURE_DATA：可順暢播放
+        else {
+            const onCanPlayThrough = () => { hero.removeEventListener('canplaythrough', onCanPlayThrough); start(); };
+            hero.addEventListener('canplaythrough', onCanPlayThrough, { once: true });
+            // 保險：7 秒後仍未就緒也強行啟動
+            setTimeout(() => { start(); }, 7000);
+        }
     };
 
     const hideLoaderAndStartHero = () => {
@@ -629,6 +638,10 @@ window.addEventListener('load', () => {
             try { intro.play().catch(() => {}); } catch (_) {}
         }, { once: false });
         intro.addEventListener('loadeddata', () => {
+            try { intro.play().catch(() => {}); } catch (_) {}
+        }, { once: true });
+        // 若載入後遲遲未觸發 play，額外等 canplay 再嘗試一次
+        intro.addEventListener('canplay', () => {
             try { intro.play().catch(() => {}); } catch (_) {}
         }, { once: true });
 
@@ -742,4 +755,3 @@ window.addEventListener('load', () => {
     showRandomFourAll();
     initFolderCards();
 });
-
