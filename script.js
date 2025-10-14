@@ -621,7 +621,37 @@ window.addEventListener('load', () => {
             hideLoaderAndStartHero();
         }, { once: true });
 
-        const showIntroPlayOverlay = () => { /* 取消點擊啟動覆蓋層 */ };
+        const showIntroPlayOverlay = () => {
+            // 移除點擊按鈕，改為持續重試自動播放
+            const keepTryingPlay = async () => {
+                for (let i = 0; i < 20; i++) {
+                    try {
+                        ensureInlineMutedAutoplay(intro);
+                        const p = intro.play();
+                        if (p && typeof p.then === 'function') {
+                            await p;
+                            introStarted = true;
+                            markPlaying(intro);
+                            removeIntroFallback();
+                            // 啟動 3.5 秒計時器
+                            setTimeout(() => { hideLoaderAndStartHero(); }, 3500);
+                            return;
+                        } else {
+                            introStarted = true;
+                            markPlaying(intro);
+                            removeIntroFallback();
+                            setTimeout(() => { hideLoaderAndStartHero(); }, 3500);
+                            return;
+                        }
+                    } catch (_) {
+                        await new Promise(r => setTimeout(r, 300));
+                    }
+                }
+                // 如果 20 次都失敗，直接進入網站
+                hideLoaderAndStartHero();
+            };
+            keepTryingPlay();
+        };
 
         const tryPlayIntro = () => {
             const playPromise = intro.play();
@@ -630,6 +660,7 @@ window.addEventListener('load', () => {
                     .catch(async () => {
                         const ok = await autoplayRetry(intro, { max: 10, delayMs: 200 });
                         if (ok) { introStarted = true; markPlaying(intro); removeIntroFallback(); }
+                        else { showIntroPlayOverlay(); }
                     });
             } else { introStarted = true; markPlaying(intro); removeIntroFallback(); }
         };
