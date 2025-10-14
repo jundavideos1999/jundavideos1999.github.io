@@ -554,7 +554,7 @@ window.addEventListener('load', () => {
     // 加入超時保險：桌面 3.5s；手機 4s
     let introTimeout;
     if (isMobile) {
-        const INTRO_MAX_WAIT_MS_MOBILE = 4000;
+        const INTRO_MAX_WAIT_MS_MOBILE = 3500;
         introTimeout = setTimeout(() => { hideLoaderAndStartHero(); }, INTRO_MAX_WAIT_MS_MOBILE);
     } else {
         const INTRO_MAX_WAIT_MS_DESKTOP = 3500;
@@ -604,6 +604,13 @@ window.addEventListener('load', () => {
                 playPromise.then(() => { introStarted = true; removeIntroFallback(); }).catch(() => { showIntroPlayOverlay(); });
             } else { introStarted = true; removeIntroFallback(); }
         };
+
+        intro.addEventListener('canplay', () => {
+            try { intro.play().catch(() => {}); } catch (_) {}
+        }, { once: false });
+        intro.addEventListener('loadeddata', () => {
+            try { intro.play().catch(() => {}); } catch (_) {}
+        }, { once: true });
 
         if (intro.readyState >= 2) { tryPlayIntro(); }
         else { intro.addEventListener('canplay', tryPlayIntro, { once: true }); }
