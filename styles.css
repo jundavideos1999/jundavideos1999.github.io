@@ -528,6 +528,20 @@ body.no-scroll { position: fixed; width: 100%; }
 }
 
 @media (max-width: 768px) {
+    /* 隱藏行動裝置預設影片播放控制與中心播放圖示（確保初始無播放圖樣） */
+    video::-webkit-media-controls {
+        display: none !important;
+        opacity: 0 !important;
+    }
+    video::-webkit-media-controls-start-playback-button {
+        display: none !important;
+        -webkit-appearance: none;
+        opacity: 0 !important;
+    }
+    video::-webkit-media-controls-enclosure {
+        display: none !important;
+        opacity: 0 !important;
+    }
     .image-modal { width: min(100%, 760px); }
     .image-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .image-gallery img { height: 180px; }
