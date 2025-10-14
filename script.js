@@ -287,13 +287,13 @@ const openLightboxWithUrl = (url) => {
     let embed;
     if (/youtu\.be|youtube\.com/.test(url)) {
         const videoId = extractYouTubeId(url);
-        embed = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        embed = `<iframe src=\"https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0\" frameborder=\"0\" allow=\"autoplay; encrypted-media\" allowfullscreen></iframe>`;
     } else if (/vimeo\.com/.test(url)) {
         const idMatch = url.match(/vimeo\.com\/(\d+)/);
         const id = idMatch ? idMatch[1] : '';
-        embed = `<iframe src="https://player.vimeo.com/video/${id}?autoplay=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+        embed = `<iframe src=\"https://player.vimeo.com/video/${id}?autoplay=1\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>`;
     } else {
-        embed = `<video src="${url}" controls autoplay playsinline></video>`;
+        embed = `<video src=\"${url}\" controls autoplay playsinline></video>`;
     }
     videoWrapper.innerHTML = embed;
     lightbox.classList.add('active');
@@ -504,6 +504,9 @@ window.addEventListener('load', () => {
         } catch (_) {}
     }
 
+    // 判斷是否為行動裝置（以視窗寬度判斷）
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
     let heroStarted = false;
     let canStartHero = false;
     let introStarted = false;
@@ -539,19 +542,20 @@ window.addEventListener('load', () => {
         window.removeEventListener('touchmove', preventScroll, { passive: false });
     };
 
-    const INTRO_MAX_WAIT_MS = 3500; // 最長等待 3.5s 就進場，避免黑屏
-    const introTimeout = setTimeout(() => {
-        hideLoaderAndStartHero();
-    }, INTRO_MAX_WAIT_MS);
+    // 桌面保留 3.5s 超時保險；行動裝置不使用超時，直到片頭播放完成
+    let introTimeout;
+    if (!isMobile) {
+        const INTRO_MAX_WAIT_MS = 3500;
+        introTimeout = setTimeout(() => { hideLoaderAndStartHero(); }, INTRO_MAX_WAIT_MS);
+    }
 
     if (intro) {
-        // 影片一旦可播放或開始播放，移除圖片後備，避免重疊
         const clearFallback = () => { removeIntroFallback(); };
         intro.addEventListener('loadeddata', clearFallback, { once: true });
         intro.addEventListener('play', clearFallback, { once: true });
 
         intro.addEventListener('ended', () => {
-            clearTimeout(introTimeout);
+            if (introTimeout) clearTimeout(introTimeout);
             hideLoaderAndStartHero();
         }, { once: true });
 
