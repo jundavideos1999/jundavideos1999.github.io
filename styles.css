@@ -1483,11 +1483,11 @@ body.no-scroll { position: fixed; width: 100%; }
     }
 }
 
-/* 頁面載入覆蓋層（LOGO 影片） */
+/* 載入覆蓋層（LOGO 影片） */
 #page-loader {
     position: fixed;
     inset: 0;
-    background: #000;
+    background: #000 url('images/Loading_background.png') center center / cover no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1506,6 +1506,29 @@ body.no-scroll { position: fixed; width: 100%; }
     display: block;
 }
 
+/* 立即可見的 CSS 轉圈載入後備 */
+#intro-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.intro-spinner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: #ffffff;
+    animation: intro-spin 0.9s linear infinite;
+}
+
+@keyframes intro-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 /* 桌面版：LOGO 載入影片滿版覆蓋 */
 @media (min-width: 1024px) {
     #page-loader video {
@@ -1515,15 +1538,10 @@ body.no-scroll { position: fixed; width: 100%; }
     }
 }
 
-/* 手機版：LOGO 載入背景色調 */
+/* 手機版：使用新背景圖 + 轉圈 */
 @media (max-width: 768px) {
     #page-loader {
-        /* 使用 LOGO 畫面做為載入背景，避免黑屏 */
-        background-color: #000; /* 若圖片未載入時的底色 */
-        background-image: url('images/Logo.png');
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: contain;
+        background: #000 url('images/Laoding_background') center center / cover no-repeat;
     }
     #page-loader video {
         width: 100%;
@@ -1534,12 +1552,10 @@ body.no-scroll { position: fixed; width: 100%; }
         filter: none !important;
         background: transparent !important;
     }
-    /* 手機端同步調整頁面背景，避免淡入期間白屏 */
     html,
     body {
         background: #000;
     }
-    /* 手機端：移除 Hero 覆蓋層，避免影片偏灰 */
     .hero .video-overlay { display: none; }
 }
 
