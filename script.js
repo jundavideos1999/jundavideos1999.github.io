@@ -586,7 +586,7 @@ window.addEventListener('load', () => {
         document.addEventListener('click', preventClicksDuringLoader, true);
     }
 
-    // 加入超時保險：桌面 3.5s；手機 4s
+    // 加入超時保險：桌面 3.5s；手機 3.5s
     let introTimeout;
     if (isMobile) {
         const INTRO_MAX_WAIT_MS_MOBILE = 3500;
@@ -606,32 +606,7 @@ window.addEventListener('load', () => {
             hideLoaderAndStartHero();
         }, { once: true });
 
-        const showIntroPlayOverlay = () => {
-            if (isMobile) return; // 行動裝置不顯示點擊啟動覆蓋層
-            if (document.getElementById('intro-play-overlay')) return;
-            const btn = document.createElement('button');
-            btn.id = 'intro-play-overlay';
-            btn.type = 'button';
-            btn.setAttribute('aria-label', '點一下開始');
-            btn.style.cssText = `
-                position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-                background: rgba(0,0,0,0.6); color: #fff; z-index: 3500; border: 0; cursor: pointer;
-            `;
-            const inner = document.createElement('div');
-            inner.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:12px;';
-            inner.innerHTML = '<i class="fas fa-play" style="font-size:28px"></i><span style="font-weight:700">點一下開始</span>';
-            btn.appendChild(inner);
-            btn.addEventListener('click', () => {
-                ensureInlineMutedAutoplay(intro);
-                const p = intro.play();
-                if (p && typeof p.then === 'function') {
-                    p.then(() => { introStarted = true; btn.remove(); removeIntroFallback(); }).catch(() => {});
-                } else {
-                    introStarted = true; btn.remove(); removeIntroFallback();
-                }
-            }, { passive: false });
-            document.body.appendChild(btn);
-        };
+        const showIntroPlayOverlay = () => { /* 取消點擊啟動覆蓋層 */ };
 
         const tryPlayIntro = () => {
             const playPromise = intro.play();
@@ -640,7 +615,6 @@ window.addEventListener('load', () => {
                     .catch(async () => {
                         const ok = await autoplayRetry(intro, { max: 10, delayMs: 200 });
                         if (ok) { introStarted = true; markPlaying(intro); removeIntroFallback(); }
-                        else { showIntroPlayOverlay(); }
                     });
             } else { introStarted = true; markPlaying(intro); removeIntroFallback(); }
         };
@@ -670,32 +644,9 @@ window.addEventListener('load', () => {
         }
     });
 
-    // 桌面端保留首次互動保險；手機端不註冊任何點擊啟動
-    if (!window.matchMedia('(max-width: 768px)').matches) {
-        const onFirstUserInteraction = () => {
-            if (intro && !introStarted) {
-                try { intro.play().then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); }).catch(() => {}); } catch (_) {}
-            } else {
-                tryStartHero();
-            }
-            window.removeEventListener('touchstart', onFirstUserInteraction);
-            window.removeEventListener('click', onFirstUserInteraction);
-        };
-        window.addEventListener('touchstart', onFirstUserInteraction, { once: true, passive: true });
-        window.addEventListener('click', onFirstUserInteraction, { once: true });
-    }
+    // 取消桌面端首次互動保險（完全不靠點擊觸發播放）
 
-    // 行動端保險：首次觸控即嘗試播放 intro 與 hero，並標記播放中以淡入
-    if (window.matchMedia('(max-width: 768px)').matches) {
-        const onFirstTouchMobile = () => {
-            if (intro && !introStarted) {
-                try { intro.play().then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); }).catch(() => {}); } catch (_) {}
-            }
-            tryStartHero();
-            window.removeEventListener('touchstart', onFirstTouchMobile);
-        };
-        window.addEventListener('touchstart', onFirstTouchMobile, { once: true, passive: true });
-    }
+    // 取消行動端首次觸控保險（完全不靠點擊觸發播放）
 });
 
 // 頁面載入時的淡入效果（已移除以避免桌面黑屏）
