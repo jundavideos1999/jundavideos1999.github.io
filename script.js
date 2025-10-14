@@ -641,9 +641,9 @@ window.addEventListener('load', () => {
     }
 });
 
-// 頁面載入時的淡入效果
-document.body.style.opacity = '0';
-document.body.style.transition = 'opacity 0.5s ease';
+// 頁面載入時的淡入效果（已移除以避免桌面黑屏）
+// document.body.style.opacity = '0';
+// document.body.style.transition = 'opacity 0.5s ease';
 
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function (event) {

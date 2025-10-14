@@ -26,7 +26,7 @@
 <body>
     <!-- 載入覆蓋層：LOGO 影片 -->
     <div id="page-loader" aria-hidden="false" role="status">
-        <video id="intro-video" autoplay muted playsinline preload="auto" poster="images/Loading_background.png" aria-label="載入中">
+        <video id="intro-video" autoplay muted playsinline preload="auto" poster="images/Loading_background.png" aria-label="載入中" fetchpriority="high">
             <!-- 桌面版使用原本的 LOGO 影片 -->
             <source src="videos/LOGO_video.mp4" type="video/mp4" media="(min-width: 769px)">
             <!-- 手機版使用 4K 手機專用影片 -->
@@ -57,7 +57,7 @@
                     <a href="#about" class="nav-link">關於我</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#blog" class="nav-link">部落格</a>
+                    <a href="#blog" class="nav-link">工作室相關資訊</a>
                 </li>
                 <li class="nav-item">
                     <a href="#contact" class="nav-link">聯絡我</a>
@@ -75,12 +75,12 @@
     <section id="home" class="hero">
         <!-- 影片背景 -->
         <div class="hero-video-background">
-            <video id="hero-bg-video" autoplay muted loop playsinline preload="metadata" poster="images/Logo.png">
+            <video id="hero-bg-video" autoplay muted loop playsinline preload="metadata" poster="images/Loading_background.png">
                 <!-- 優先使用相容性較佳的 MP4，MOV 作為備援 -->
                 <source src="videos/hero-video.mp4" type="video/mp4">
                 <source src="videos/hero-video.mov" type="video/quicktime">
                 <!-- 如果影片無法播放，顯示後備圖片 -->
-                <img src="images/hero/hero-fallback.jpg" alt="攝影背景">
+                <img src="images/Loading_background.png" alt="攝影背景">
             </video>
             <div class="video-overlay"></div>
         </div>
