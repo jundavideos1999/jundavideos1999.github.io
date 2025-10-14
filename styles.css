@@ -1610,3 +1610,7 @@ body.no-scroll { position: fixed; width: 100%; }
         image-rendering: crisp-edges;
     }
 }
+
+@media (min-width: 769px) {
+    #intro-fallback { display: none; }
+}
