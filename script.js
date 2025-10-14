@@ -504,7 +504,6 @@ window.addEventListener('load', () => {
         } catch (_) {}
     }
 
-    // 判斷是否為行動裝置（以視窗寬度判斷）
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
     let heroStarted = false;
@@ -542,11 +541,14 @@ window.addEventListener('load', () => {
         window.removeEventListener('touchmove', preventScroll, { passive: false });
     };
 
-    // 桌面保留 3.5s 超時保險；行動裝置不使用超時，直到片頭播放完成
+    // 加入超時保險：桌面 3.5s；手機 4s
     let introTimeout;
-    if (!isMobile) {
-        const INTRO_MAX_WAIT_MS = 3500;
-        introTimeout = setTimeout(() => { hideLoaderAndStartHero(); }, INTRO_MAX_WAIT_MS);
+    if (isMobile) {
+        const INTRO_MAX_WAIT_MS_MOBILE = 4000;
+        introTimeout = setTimeout(() => { hideLoaderAndStartHero(); }, INTRO_MAX_WAIT_MS_MOBILE);
+    } else {
+        const INTRO_MAX_WAIT_MS_DESKTOP = 3500;
+        introTimeout = setTimeout(() => { hideLoaderAndStartHero(); }, INTRO_MAX_WAIT_MS_DESKTOP);
     }
 
     if (intro) {
