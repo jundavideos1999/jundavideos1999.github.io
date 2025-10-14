@@ -479,11 +479,13 @@ window.addEventListener('load', () => {
         if (!videoEl) return;
         try {
             videoEl.muted = true;
+            videoEl.volume = 0; // 某些瀏覽器需要同時設置為0
             videoEl.autoplay = true;
             videoEl.playsInline = true;
             videoEl.setAttribute('muted', '');
             videoEl.setAttribute('playsinline', '');
             videoEl.setAttribute('webkit-playsinline', '');
+            videoEl.setAttribute('x5-playsinline', '');
             videoEl.setAttribute('autoplay', '');
         } catch (_) {}
     };
@@ -531,12 +533,31 @@ window.addEventListener('load', () => {
     attachPlayingHandlers(intro);
     attachPlayingHandlers(hero);
 
+    const autoplayRetry = async (v, opts = {}) => {
+        const { max = 8, delayMs = 250 } = opts;
+        for (let i = 0; i < max; i += 1) {
+            try {
+                ensureInlineMutedAutoplay(v);
+                const p = v.play();
+                if (p && typeof p.then === 'function') await p;
+                return true;
+            } catch (_) {}
+            await new Promise(r => setTimeout(r, delayMs));
+        }
+        return false;
+    };
+
     const tryStartHero = () => {
         if (!hero || heroStarted || !canStartHero) return;
         ensureInlineMutedAutoplay(hero);
         const p = hero.play();
-        if (p && typeof p.then === 'function') { p.then(() => { heroStarted = true; markPlaying(hero); }).catch(() => {}); }
-        else { heroStarted = true; markPlaying(hero); }
+        if (p && typeof p.then === 'function') {
+            p.then(() => { heroStarted = true; markPlaying(hero); })
+             .catch(async () => {
+                const ok = await autoplayRetry(hero, { max: 10, delayMs: 200 });
+                if (ok) { heroStarted = true; markPlaying(hero); }
+             });
+        } else { heroStarted = true; markPlaying(hero); }
     };
 
     const hideLoaderAndStartHero = () => {
@@ -615,7 +636,12 @@ window.addEventListener('load', () => {
         const tryPlayIntro = () => {
             const playPromise = intro.play();
             if (playPromise && typeof playPromise.then === 'function') {
-                playPromise.then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); }).catch(() => { showIntroPlayOverlay(); });
+                playPromise.then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); })
+                    .catch(async () => {
+                        const ok = await autoplayRetry(intro, { max: 10, delayMs: 200 });
+                        if (ok) { introStarted = true; markPlaying(intro); removeIntroFallback(); }
+                        else { showIntroPlayOverlay(); }
+                    });
             } else { introStarted = true; markPlaying(intro); removeIntroFallback(); }
         };
 
@@ -634,7 +660,12 @@ window.addEventListener('load', () => {
 
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
-            if (!introStarted && intro) { try { intro.play().then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); }).catch(() => {}); } catch (_) {} }
+            if (!introStarted && intro) {
+                try {
+                    intro.play().then(() => { introStarted = true; markPlaying(intro); removeIntroFallback(); })
+                        .catch(async () => { const ok = await autoplayRetry(intro); if (ok) { introStarted = true; markPlaying(intro); removeIntroFallback(); } });
+                } catch (_) {}
+            }
             tryStartHero();
         }
     });
