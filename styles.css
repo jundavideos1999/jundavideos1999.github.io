@@ -17,15 +17,6 @@ html {
     background: #000;
 }
 
-/* 載入期間禁止滾動 */
-html.no-scroll,
-body.no-scroll {
-    overflow: hidden;
-    height: 100%;
-}
-html.no-scroll { overscroll-behavior: none; }
-body.no-scroll { position: fixed; width: 100%; }
-
 :root {
     --navbar-opacity: 0.95; /* 直接在這裡調整 0.50 ~ 1.00 */
 }
@@ -144,7 +135,7 @@ body.no-scroll { position: fixed; width: 100%; }
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0; /* 調整：確保不會被頁面背景覆蓋 */
+    z-index: -2;
 }
 
 .hero-video-background video {
@@ -153,10 +144,6 @@ body.no-scroll { position: fixed; width: 100%; }
     object-fit: cover;
     object-position: center;
 }
-
-/* 自動播放影片：播放前先隱藏，播放後淡入，避免顯示播放圖示 */
-.video-autoplay { opacity: 0; transition: opacity 300ms ease; }
-.video-autoplay.is-playing { opacity: 1; }
 
 .hero-video-background img {
     width: 100%;
@@ -172,16 +159,15 @@ body.no-scroll { position: fixed; width: 100%; }
     left: 0;
     width: 100%;
     height: 100%;
-    /* 改為僅底部加深，避免整體偏灰 */
-    background: linear-gradient(transparent 55%, rgba(0, 0, 0, 0.45) 100%);
-    z-index: 0; /* 調整：位於影片之上、內容之下 */
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
 }
 
 .hero-content {
     flex: 1;
     max-width: 600px;
     position: relative;
-    z-index: 2; /* 調整：確保內容在最上層 */
+    z-index: 1;
 }
 
 .hero-title {
@@ -352,27 +338,6 @@ body.no-scroll { position: fixed; width: 100%; }
     display: block;
 }
 
-/* 縮圖載入動畫 */
-.thumbnail-loading {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
-    color: #666;
-    font-size: 2rem;
-}
-
-.thumbnail-loading i {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
 .portfolio-overlay {
     position: absolute;
     bottom: 0;
@@ -532,38 +497,6 @@ body.no-scroll { position: fixed; width: 100%; }
 }
 
 @media (max-width: 768px) {
-    /* 盡可能隱藏行動端原生控制與播放按鈕（不同廠商實作差異大，盡量壓制） */
-    video::-webkit-media-controls,
-    video::-webkit-media-controls-panel,
-    video::-webkit-media-controls-play-button,
-    video::-webkit-media-controls-volume-slider,
-    video::-webkit-media-controls-mute-button,
-    video::-webkit-media-controls-timeline,
-    video::-webkit-media-controls-current-time-display,
-    video::-webkit-media-controls-time-remaining-display,
-    video::-webkit-media-controls-fullscreen-button,
-    video::-webkit-media-controls-enclosure,
-    video::-webkit-media-controls-overlay-play-button,
-    video::-webkit-media-controls-start-playback-button {
-        display: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-        -webkit-appearance: none !important;
-    }
-    /* 隱藏行動裝置預設影片播放控制與中心播放圖示（確保初始無播放圖樣） */
-    video::-webkit-media-controls {
-        display: none !important;
-        opacity: 0 !important;
-    }
-    video::-webkit-media-controls-start-playback-button {
-        display: none !important;
-        -webkit-appearance: none;
-        opacity: 0 !important;
-    }
-    video::-webkit-media-controls-enclosure {
-        display: none !important;
-        opacity: 0 !important;
-    }
     .image-modal { width: min(100%, 760px); }
     .image-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .image-gallery img { height: 180px; }
@@ -1164,8 +1097,7 @@ body.no-scroll { position: fixed; width: 100%; }
     }
 
     .skills-list {
-        grid-template-columns: repeat(2, 1fr); /* 手機端改為兩欄，維持元素順序 */
-        grid-auto-flow: row;
+        grid-template-columns: 1fr;
         gap: 0.6rem;
     }
 
@@ -1519,11 +1451,11 @@ body.no-scroll { position: fixed; width: 100%; }
     }
 }
 
-/* 載入覆蓋層（LOGO 影片） */
+/* 頁面載入覆蓋層（LOGO 影片） */
 #page-loader {
     position: fixed;
     inset: 0;
-    background: #000 url('images/Loading_background.png') center center / cover no-repeat;
+    background: #000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1537,38 +1469,9 @@ body.no-scroll { position: fixed; width: 100%; }
 }
 
 #page-loader video {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: min(60vw, 520px);
+    height: auto;
     display: block;
-}
-
-/* 立即可見的 CSS 轉圈載入後備 */
-#intro-fallback {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.intro-spinner {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 4px solid rgba(255,255,255,0.2);
-    border-top-color: #ffffff;
-    animation: intro-spin 0.9s linear infinite;
-}
-
-@keyframes intro-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
 }
 
 /* 桌面版：LOGO 載入影片滿版覆蓋 */
@@ -1580,73 +1483,37 @@ body.no-scroll { position: fixed; width: 100%; }
     }
 }
 
-/* 手機版：使用新背景圖 + 轉圈 */
+/* 手機版：LOGO 載入背景色調 */
 @media (max-width: 768px) {
     #page-loader {
-        background: #000 url('images/Laoding_background') center center / cover no-repeat;
+        background: #000;
     }
     #page-loader video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center center;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center !important;
         box-shadow: none !important;
         filter: none !important;
         background: transparent !important;
     }
+    /* 手機端同步調整頁面背景，避免淡入期間白屏 */
     html,
     body {
         background: #000;
     }
-    .hero .video-overlay { display: none; }
-}
-
-/* 手機版載入影片全版適配 - 針對不同螢幕比例優化 */
-@media (max-width: 768px) {
-    #page-loader {
-        position: fixed;
-        inset: 0;
-        background: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 3000;
+    
+    /* 手機端背景影片優化 */
+    .hero-video-background video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
     }
     
-    #page-loader video {
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        object-position: center center;
-        min-width: 100%;
-        min-height: 100%;
+    /* 確保手機端影片遮罩不會過度遮擋 */
+    .video-overlay {
+        background: rgba(0, 0, 0, 0.3);
     }
 }
 
-/* 超寬螢幕手機適配 (如 Galaxy Fold 展開狀態) */
-@media (max-width: 768px) and (min-aspect-ratio: 1/1) {
-    #page-loader video {
-        object-fit: contain;
-        object-position: center center;
-    }
-}
-
-/* 極窄螢幕手機適配 (如 iPhone SE) */
-@media (max-width: 375px) {
-    #page-loader video {
-        object-fit: cover;
-        object-position: center center;
-    }
-}
-
-/* 高解析度手機適配 */
-@media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
-    #page-loader video {
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-    }
-}
-
-@media (min-width: 769px) {
-    #intro-fallback { display: none; }
-}
