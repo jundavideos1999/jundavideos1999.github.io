@@ -12,10 +12,17 @@ body {
     overflow-x: hidden;
 }
 
-/* 預設全頁背景改為深色，避免初始白屏閃爍 */
-html {
-    background: #000;
+/* 頁面背景色 */
+html { background: #000; }
+
+/* 載入期間禁止滾動 */
+html.no-scroll,
+body.no-scroll {
+    overflow: hidden;
+    height: 100%;
 }
+html.no-scroll { overscroll-behavior: none; }
+body.no-scroll { position: fixed; width: 100%; }
 
 :root {
     --navbar-opacity: 0.95; /* 直接在這裡調整 0.50 ~ 1.00 */
@@ -135,7 +142,7 @@ html {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -2;
+    z-index: 0; /* 調整：確保不會被頁面背景覆蓋 */
 }
 
 .hero-video-background video {
@@ -143,6 +150,19 @@ html {
     height: 100%;
     object-fit: cover;
     object-position: center;
+}
+
+/* 影片淡入顯示 */
+.video-autoplay { opacity: 0; transition: opacity 300ms ease; }
+.video-autoplay.is-playing { opacity: 1; }
+
+/* 手機端：hero 影片直接顯示，不需要等待播放狀態 */
+@media (max-width: 768px) {
+    #hero-bg-video.video-autoplay { 
+        opacity: 1 !important; 
+        transition: none;
+    }
+    
 }
 
 .hero-video-background img {
@@ -159,15 +179,16 @@ html {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: -1;
+    /* 改為僅底部加深，避免整體偏灰 */
+    background: linear-gradient(transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+    z-index: 0; /* 調整：位於影片之上、內容之下 */
 }
 
 .hero-content {
     flex: 1;
     max-width: 600px;
     position: relative;
-    z-index: 1;
+    z-index: 2; /* 調整：確保內容在最上層 */
 }
 
 .hero-title {
@@ -338,6 +359,8 @@ html {
     display: block;
 }
 
+/* 移除未使用的縮圖載入動畫樣式 */
+
 .portfolio-overlay {
     position: absolute;
     bottom: 0;
@@ -497,6 +520,38 @@ html {
 }
 
 @media (max-width: 768px) {
+    /* 盡可能隱藏行動端原生控制與播放按鈕（不同廠商實作差異大，盡量壓制） */
+    video::-webkit-media-controls,
+    video::-webkit-media-controls-panel,
+    video::-webkit-media-controls-play-button,
+    video::-webkit-media-controls-volume-slider,
+    video::-webkit-media-controls-mute-button,
+    video::-webkit-media-controls-timeline,
+    video::-webkit-media-controls-current-time-display,
+    video::-webkit-media-controls-time-remaining-display,
+    video::-webkit-media-controls-fullscreen-button,
+    video::-webkit-media-controls-enclosure,
+    video::-webkit-media-controls-overlay-play-button,
+    video::-webkit-media-controls-start-playback-button {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        -webkit-appearance: none !important;
+    }
+    /* 隱藏行動裝置預設影片播放控制與中心播放圖示（確保初始無播放圖樣） */
+    video::-webkit-media-controls {
+        display: none !important;
+        opacity: 0 !important;
+    }
+    video::-webkit-media-controls-start-playback-button {
+        display: none !important;
+        -webkit-appearance: none;
+        opacity: 0 !important;
+    }
+    video::-webkit-media-controls-enclosure {
+        display: none !important;
+        opacity: 0 !important;
+    }
     .image-modal { width: min(100%, 760px); }
     .image-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .image-gallery img { height: 180px; }
@@ -784,8 +839,6 @@ html {
     padding: 2rem 0;
 }
 
-/* 已改為程式內設定透明度，不再顯示控制器 */
-
 /* 動畫 */
 @keyframes fadeInUp {
     from {
@@ -798,35 +851,7 @@ html {
     }
 }
 
-/* 感謝頁樣式 */
-/* .thanks-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    text-align: center;
-    background: linear-gradient(135deg, #3498db, #2c3e50);
-    color: white;
-    font-family: 'Noto Sans TC', sans-serif;
-}
-
-.thanks-container {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.thanks-container h1 {
-    margin-bottom: 20px;
-    font-size: 2.5rem;
-}
-
-.thanks-container p {
-    margin-bottom: 30px;
-    font-size: 1.2rem;
-} 
- */
+/* 移除未使用的感謝頁樣式註解 */
 
  #thankCard {
     display: none; /* 預設隱藏 */
@@ -1097,7 +1122,8 @@ html {
     }
 
     .skills-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr); /* 手機端改為兩欄，維持元素順序 */
+        grid-auto-flow: row;
         gap: 0.6rem;
     }
 
@@ -1451,69 +1477,31 @@ html {
     }
 }
 
-/* 頁面載入覆蓋層（LOGO 影片） */
-#page-loader {
+/* 移除 LOGO 片頭載入層相關樣式 */
+/* Intro overlay for logo video */
+.intro-overlay {
     position: fixed;
     inset: 0;
     background: #000;
-    display: flex;
+    display: none; /* default hidden; shown via JS */
     align-items: center;
     justify-content: center;
     z-index: 3000;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
-#page-loader.hide {
-    opacity: 0;
-    visibility: hidden;
-}
-
-#page-loader video {
-    width: min(60vw, 520px);
-    height: auto;
+.intro-overlay video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* desktop full-bleed */
     display: block;
+    outline: none;
 }
 
-/* 桌面版：LOGO 載入影片滿版覆蓋 */
-@media (min-width: 1024px) {
-    #page-loader video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+.intro-overlay.hide {
+    animation: introFadeOut 600ms ease forwards;
 }
 
-/* 手機版：LOGO 載入背景色調 */
-@media (max-width: 768px) {
-    #page-loader {
-        background: #000;
-    }
-    #page-loader video {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-        object-position: center !important;
-        box-shadow: none !important;
-        filter: none !important;
-        background: transparent !important;
-    }
-    /* 手機端同步調整頁面背景，避免淡入期間白屏 */
-    html,
-    body {
-        background: #000;
-    }
-    
-    /* 手機端背景影片優化 */
-    .hero-video-background video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-    }
-    
-    /* 確保手機端影片遮罩不會過度遮擋 */
-    .video-overlay {
-        background: rgba(0, 0, 0, 0.3);
-    }
+@keyframes introFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; visibility: hidden; }
 }
-
