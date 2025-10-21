@@ -291,6 +291,7 @@ window.addEventListener('load', () => {
     const hero = document.getElementById('hero-bg-video');
     const introOverlay = document.getElementById('intro-overlay');
     const introVideo = document.getElementById('intro-logo-video');
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
     const markPlaying = (v) => { try { v.classList.add('is-playing'); } catch (_) {} };
     const ensureInlineMutedAutoplay = (videoEl) => {
         if (!videoEl) return;
@@ -316,7 +317,7 @@ window.addEventListener('load', () => {
 
     // Hero video always uses hero-video.mp4 (no device switching needed)
     
-    // Intro sequence: lock scroll, pause hero, play logo first
+    // Intro sequence: lock scroll, pause hero, play logo first (skip on mobile)
     const lockScroll = () => { document.documentElement.classList.add('no-scroll'); document.body.classList.add('no-scroll'); };
     const unlockScroll = () => { document.documentElement.classList.remove('no-scroll'); document.body.classList.remove('no-scroll'); };
     const pauseHero = () => { try { hero.pause(); } catch (_) {} };
@@ -330,6 +331,14 @@ window.addEventListener('load', () => {
     };
 
     const startIntroSequence = () => {
+        if (isMobile) { // mobile: skip intro, play hero immediately
+            if (introOverlay) {
+                introOverlay.style.display = 'none';
+                introOverlay.setAttribute('aria-hidden', 'true');
+            }
+            playHero();
+            return;
+        }
         if (!introOverlay || !introVideo) return;
         lockScroll();
         pauseHero();

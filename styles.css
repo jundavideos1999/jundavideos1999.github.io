@@ -1505,3 +1505,8 @@ body.no-scroll { position: fixed; width: 100%; }
     from { opacity: 1; }
     to { opacity: 0; visibility: hidden; }
 }
+
+/* Hide intro overlay entirely on small screens */
+@media (max-width: 768px) {
+    .intro-overlay { display: none !important; }
+}
