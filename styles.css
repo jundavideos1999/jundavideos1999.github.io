@@ -24,6 +24,75 @@ body.no-scroll {
 html.no-scroll { overscroll-behavior: none; }
 body.no-scroll { position: fixed; width: 100%; }
 
+.page-preloader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000 url('images/Loading_background.png') center / cover no-repeat;
+    z-index: 4000;
+    transition: opacity 0.4s ease;
+    pointer-events: auto;
+}
+
+.page-preloader::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 0;
+}
+
+.page-preloader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.preloader-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 32px;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    backdrop-filter: blur(6px);
+    z-index: 1;
+}
+
+.preloader-spinner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    animation: preloaderSpin 1s linear infinite;
+}
+
+.preloader-text {
+    font-size: 1rem;
+}
+
+@keyframes preloaderSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .preloader-spinner {
+        animation: none;
+        border-top-color: rgba(255, 255, 255, 0.75);
+    }
+}
+
 :root {
     --navbar-opacity: 0.95; /* 直接在這裡調整 0.50 ~ 1.00 */
 }

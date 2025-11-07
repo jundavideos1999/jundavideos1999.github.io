@@ -1,6 +1,53 @@
 // 導航欄功能
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
+const pagePreloader = document.getElementById('page-preloader');
+
+const lockScroll = () => {
+    document.documentElement.classList.add('no-scroll');
+    document.body.classList.add('no-scroll');
+};
+
+const unlockScroll = () => {
+    document.documentElement.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll');
+};
+
+const hidePreloader = () => new Promise((resolve) => {
+    if (!pagePreloader) {
+        resolve();
+        return;
+    }
+    if (pagePreloader.classList.contains('is-hidden')) {
+        resolve();
+        return;
+    }
+    pagePreloader.setAttribute('aria-hidden', 'true');
+    pagePreloader.classList.add('is-hidden');
+
+    let resolved = false;
+    const finalize = () => {
+        if (resolved) return;
+        resolved = true;
+        pagePreloader.style.display = 'none';
+        resolve();
+    };
+
+    const handleTransitionEnd = (event) => {
+        if (event.target !== pagePreloader) return;
+        pagePreloader.removeEventListener('transitionend', handleTransitionEnd);
+        finalize();
+    };
+
+    pagePreloader.addEventListener('transitionend', handleTransitionEnd);
+    setTimeout(finalize, 700);
+});
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', lockScroll, { once: true });
+} else {
+    lockScroll();
+}
 
 // 瀏覽器原生 lazy 屬性已足夠，移除額外 Lazy Load 觀察器
 
@@ -317,9 +364,6 @@ window.addEventListener('load', () => {
 
     // Hero video always uses hero-video.mp4 (no device switching needed)
     
-    // Intro sequence: lock scroll, pause hero, play logo first (skip on mobile)
-    const lockScroll = () => { document.documentElement.classList.add('no-scroll'); document.body.classList.add('no-scroll'); };
-    const unlockScroll = () => { document.documentElement.classList.remove('no-scroll'); document.body.classList.remove('no-scroll'); };
     const pauseHero = () => { try { hero.pause(); } catch (_) {} };
     const playHero = () => {
         try {
@@ -330,31 +374,65 @@ window.addEventListener('load', () => {
         } catch (_) {}
     };
 
+    const waitForVideoReady = (videoEl) => new Promise((resolve) => {
+        if (!videoEl) {
+            resolve();
+            return;
+        }
+        let fallbackTimer;
+        const cleanup = () => {
+            videoEl.removeEventListener('canplaythrough', onReady);
+            videoEl.removeEventListener('loadeddata', onReady);
+            videoEl.removeEventListener('error', onError);
+            if (fallbackTimer) clearTimeout(fallbackTimer);
+        };
+        const settle = () => {
+            cleanup();
+            resolve();
+        };
+        const onReady = () => { settle(); };
+        const onError = () => { settle(); };
+        if (videoEl.readyState >= 3) {
+            settle();
+            return;
+        }
+        videoEl.addEventListener('canplaythrough', onReady, { once: true });
+        videoEl.addEventListener('loadeddata', onReady, { once: true });
+        videoEl.addEventListener('error', onError, { once: true });
+        fallbackTimer = setTimeout(settle, 8000); // fallback to avoid indefinite wait
+    });
+
     const startIntroSequence = () => {
-        if (isMobile) { // mobile: skip intro, play hero immediately
+        if (!hero) {
+            unlockScroll();
+            return;
+        }
+        if (isMobile || !introOverlay || !introVideo) {
             if (introOverlay) {
                 introOverlay.style.display = 'none';
                 introOverlay.setAttribute('aria-hidden', 'true');
             }
+            unlockScroll();
             playHero();
             return;
         }
-        if (!introOverlay || !introVideo) return;
+
         lockScroll();
         pauseHero();
         introOverlay.style.display = 'flex';
         introOverlay.setAttribute('aria-hidden', 'false');
+        introOverlay.classList.remove('hide');
         introVideo.currentTime = 0;
-        introVideo.muted = true; // ensure autoplay compliance
+        introVideo.muted = true;
         introVideo.setAttribute('muted', '');
-        const p = introVideo.play();
-        if (p && typeof p.then === 'function') {
-            p.catch(() => { /* silently ignore autoplay blocks; overlay is visible */ });
-        }
-        const finish = () => {
+
+        let finished = false;
+        const finalizeIntro = () => {
+            if (finished) return;
+            finished = true;
             introOverlay.classList.add('hide');
-            // Wait for CSS transition to end before removing and enabling scroll
-            const removeOverlay = () => {
+            const removeOverlay = (event) => {
+                if (event.target !== introOverlay) return;
                 introOverlay.style.display = 'none';
                 introOverlay.removeEventListener('transitionend', removeOverlay);
             };
@@ -362,12 +440,33 @@ window.addEventListener('load', () => {
             playHero();
             unlockScroll();
         };
-        introVideo.addEventListener('ended', finish, { once: true });
+
+        const failSafe = setTimeout(finalizeIntro, 10000);
+        const handleEnded = () => {
+            clearTimeout(failSafe);
+            finalizeIntro();
+        };
+
+        introVideo.addEventListener('ended', handleEnded, { once: true });
+
+        const playPromise = introVideo.play();
+        if (playPromise && typeof playPromise.then === 'function') {
+            playPromise.catch(() => {
+                clearTimeout(failSafe);
+                finalizeIntro();
+            });
+        }
     };
 
-    // If assets are ready, begin intro; else wait for metadata
-    if (introVideo && introVideo.readyState >= 1) startIntroSequence();
-    else if (introVideo) introVideo.addEventListener('loadedmetadata', startIntroSequence, { once: true });
+    const beginExperience = () => {
+        hidePreloader().then(startIntroSequence).catch(startIntroSequence);
+    };
+
+    const heroReady = waitForVideoReady(hero);
+    const introReady = (!isMobile && introVideo) ? waitForVideoReady(introVideo) : Promise.resolve();
+
+    Promise.all([heroReady, introReady]).then(beginExperience).catch(beginExperience);
+
     if (hero) {
         hero.addEventListener('playing', () => markPlaying(hero), { once: true });
     }
