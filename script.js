@@ -43,11 +43,8 @@ const hidePreloader = () => new Promise((resolve) => {
     setTimeout(finalize, 700);
 });
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', lockScroll, { once: true });
-} else {
-    lockScroll();
-}
+// 移除初始锁定，让页面立即可用
+// 不再在页面加载时锁定滚动，让用户可以直接操作页面
 
 // 瀏覽器原生 lazy 屬性已足夠，移除額外 Lazy Load 觀察器
 
@@ -328,12 +325,22 @@ const createBackToTopButton = () => {
 createBackToTopButton();
 
 // 首頁背景影片自動播放與淡入顯示
-window.addEventListener('load', () => {
+// 在 DOM 加载完成后立即解锁，不等待视频加载
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        unlockScroll();
+        hidePreloader().catch(() => {});
+        startHeroVideo();
+    }, { once: true });
+} else {
+    unlockScroll();
+    hidePreloader().catch(() => {});
+    startHeroVideo();
+}
+
+function startHeroVideo() {
     const hero = document.getElementById('hero-bg-video');
     const markPlaying = (v) => { try { v.classList.add('is-playing'); } catch (_) {} };
-    
-    // 直接解鎖滾動並播放背景影片
-    unlockScroll();
     
     if (hero) {
         try {
@@ -351,9 +358,7 @@ window.addEventListener('load', () => {
             hero.addEventListener('playing', () => markPlaying(hero), { once: true });
         } catch (_) {}
     }
-    
-    hidePreloader().catch(() => {});
-});
+}
 
 // 頁面載入時的淡入效果（已移除以避免桌面黑屏）
 // document.body.style.opacity = '0';
