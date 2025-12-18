@@ -69,8 +69,6 @@ document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', 
     document.body.style.overflow = '';
 }));
 
-// 點擊導覽連結時關閉選單（已足夠）
-
 // 平滑滾動到錨點
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -178,10 +176,6 @@ contactForm.addEventListener('submit', (e) => {
         submitButton.disabled = false;
     });
 });
-
-// 移除圖片載入動畫，保持簡潔
-
-// 移除滾動淡入動畫，保持簡潔
 
 // 自動設定縮圖（YouTube）
 const setAutoThumbnails = () => {
@@ -336,140 +330,29 @@ createBackToTopButton();
 // 首頁背景影片自動播放與淡入顯示
 window.addEventListener('load', () => {
     const hero = document.getElementById('hero-bg-video');
-    const introOverlay = document.getElementById('intro-overlay');
-    const introVideo = document.getElementById('intro-logo-video');
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
     const markPlaying = (v) => { try { v.classList.add('is-playing'); } catch (_) {} };
-    const ensureInlineMutedAutoplay = (videoEl) => {
-        if (!videoEl) return;
-        try {
-            videoEl.muted = true;
-            videoEl.volume = 0;
-            videoEl.autoplay = true;
-            videoEl.playsInline = true;
-            videoEl.setAttribute('muted', '');
-            videoEl.setAttribute('playsinline', '');
-            videoEl.setAttribute('webkit-playsinline', '');
-            videoEl.setAttribute('x5-playsinline', '');
-            videoEl.setAttribute('autoplay', '');
-            videoEl.setAttribute('preload', 'auto');
-        } catch (_) {}
-    };
-    ensureInlineMutedAutoplay(hero);
-    // Prevent hero from starting until intro ends
-    if (hero) {
-        try { hero.pause(); } catch (_) {}
-        hero.removeAttribute('autoplay');
-    }
-
-    // Hero video always uses hero-video.mp4 (no device switching needed)
     
-    const pauseHero = () => { try { hero.pause(); } catch (_) {} };
-    const playHero = () => {
+    // 直接解鎖滾動並播放背景影片
+    unlockScroll();
+    
+    if (hero) {
         try {
             hero.muted = true;
             hero.setAttribute('muted', '');
-            const p = hero.play();
-            if (p && typeof p.then === 'function') p.catch(() => {});
-        } catch (_) {}
-    };
-
-    const waitForVideoReady = (videoEl) => new Promise((resolve) => {
-        if (!videoEl) {
-            resolve();
-            return;
-        }
-        let fallbackTimer;
-        const cleanup = () => {
-            videoEl.removeEventListener('canplaythrough', onReady);
-            videoEl.removeEventListener('loadeddata', onReady);
-            videoEl.removeEventListener('error', onError);
-            if (fallbackTimer) clearTimeout(fallbackTimer);
-        };
-        const settle = () => {
-            cleanup();
-            resolve();
-        };
-        const onReady = () => { settle(); };
-        const onError = () => { settle(); };
-        if (videoEl.readyState >= 3) {
-            settle();
-            return;
-        }
-        videoEl.addEventListener('canplaythrough', onReady, { once: true });
-        videoEl.addEventListener('loadeddata', onReady, { once: true });
-        videoEl.addEventListener('error', onError, { once: true });
-        fallbackTimer = setTimeout(settle, 8000); // fallback to avoid indefinite wait
-    });
-
-    const startIntroSequence = () => {
-        if (!hero) {
-            unlockScroll();
-            return;
-        }
-        if (isMobile || !introOverlay || !introVideo) {
-            if (introOverlay) {
-                introOverlay.style.display = 'none';
-                introOverlay.setAttribute('aria-hidden', 'true');
+            hero.setAttribute('playsinline', '');
+            hero.setAttribute('webkit-playsinline', '');
+            hero.setAttribute('x5-playsinline', '');
+            hero.setAttribute('autoplay', '');
+            hero.setAttribute('preload', 'auto');
+            const playPromise = hero.play();
+            if (playPromise && typeof playPromise.then === 'function') {
+                playPromise.catch(() => {});
             }
-            unlockScroll();
-            playHero();
-            return;
-        }
-
-        lockScroll();
-        pauseHero();
-        introOverlay.style.display = 'flex';
-        introOverlay.setAttribute('aria-hidden', 'false');
-        introOverlay.classList.remove('hide');
-        introVideo.currentTime = 0;
-        introVideo.muted = true;
-        introVideo.setAttribute('muted', '');
-
-        let finished = false;
-        const finalizeIntro = () => {
-            if (finished) return;
-            finished = true;
-            introOverlay.classList.add('hide');
-            const removeOverlay = (event) => {
-                if (event.target !== introOverlay) return;
-                introOverlay.style.display = 'none';
-                introOverlay.removeEventListener('transitionend', removeOverlay);
-            };
-            introOverlay.addEventListener('transitionend', removeOverlay);
-            playHero();
-            unlockScroll();
-        };
-
-        const failSafe = setTimeout(finalizeIntro, 10000);
-        const handleEnded = () => {
-            clearTimeout(failSafe);
-            finalizeIntro();
-        };
-
-        introVideo.addEventListener('ended', handleEnded, { once: true });
-
-        const playPromise = introVideo.play();
-        if (playPromise && typeof playPromise.then === 'function') {
-            playPromise.catch(() => {
-                clearTimeout(failSafe);
-                finalizeIntro();
-            });
-        }
-    };
-
-    const beginExperience = () => {
-        hidePreloader().then(startIntroSequence).catch(startIntroSequence);
-    };
-
-    const heroReady = waitForVideoReady(hero);
-    const introReady = (!isMobile && introVideo) ? waitForVideoReady(introVideo) : Promise.resolve();
-
-    Promise.all([heroReady, introReady]).then(beginExperience).catch(beginExperience);
-
-    if (hero) {
-        hero.addEventListener('playing', () => markPlaying(hero), { once: true });
+            hero.addEventListener('playing', () => markPlaying(hero), { once: true });
+        } catch (_) {}
     }
+    
+    hidePreloader().catch(() => {});
 });
 
 // 頁面載入時的淡入效果（已移除以避免桌面黑屏）

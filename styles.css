@@ -212,6 +212,10 @@ body.no-scroll { position: fixed; width: 100%; }
     width: 100%;
     height: 100%;
     z-index: 0; /* 調整：確保不會被頁面背景覆蓋 */
+    background-image: url('images/Loading_background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .hero-video-background video {
