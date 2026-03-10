@@ -728,7 +728,7 @@ body.no-scroll { position: fixed; width: 100%; }
     height: auto;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    object-position: 45% 25%;
+    object-position: 41% 25%;
     display: block;
     border-radius: 14px;
     background: #111;
